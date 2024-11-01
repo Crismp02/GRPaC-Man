@@ -1,0 +1,45 @@
+syntax = "proto3";
+package pacman;
+
+option go_package = "operator/grpc";
+option java_multiple_files = true;
+option java_generic_services = true;
+
+service LobbyService {
+  rpc JoinLobby(JoinRequest) returns (JoinResponse);
+  rpc LeaveLobby(LeaveRequest) returns (LeaveResponse);
+  rpc StreamLobby(stream LobbyUpdate) returns (stream PlayerStatus);
+  rpc StreamScores(stream ScoreUpdate) returns (stream ScoreUpdate);
+}
+
+message ScoreUpdate {
+  string player_name = 1;
+  int32 score = 2;
+}
+
+message JoinRequest {
+  string playerName = 1;
+}
+
+message JoinResponse {
+  string message = 1;
+  repeated string players = 2; // List of current players
+}
+
+message LeaveRequest {
+  string playerName = 1;
+}
+
+message LeaveResponse {
+  string message = 1;
+}
+
+message LobbyUpdate {
+  string playerName = 1;
+  bool isJoining = 2; // True if joining, false if leaving
+}
+
+message PlayerStatus {
+  string playerName = 1;
+  int32 currentPlayers = 2; // Current number of players in the lobby
+}
