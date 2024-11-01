@@ -1,0 +1,2 @@
+Comando para generar los archivos
+protoc --proto_path=../proto --java_out=src/main/java --grpc-java_out=src/main/java --plugin=protoc-gen-grpc-java=commands/protoc-gen-grpc-java-1.68.0-windows-x86_64.exe ../proto/pacman.proto
