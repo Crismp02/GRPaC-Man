@@ -2,14 +2,27 @@ import javax.swing.*;
 import java.awt.*;
 
 public class HomeScreen extends JFrame {
+    private JPanel mainPanel; // Main panel to hold different screens
+    private CardLayout cardLayout; // CardLayout to manage screens
 
     public HomeScreen() {
         setTitle("Pac-Man GRPC");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Create an instance of BackgroundPanel and add it to the JFrame
+        // Initialize CardLayout and main panel
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+
+        // Add the BackgroundPanel (home screen)
         BackgroundPanel backgroundPanel = new BackgroundPanel();
-        add(backgroundPanel);
+        mainPanel.add(backgroundPanel, "Home");
+
+        // Add the LobbyScreen
+        LobbyScreen lobbyScreen = new LobbyScreen();
+        mainPanel.add(lobbyScreen, "Lobby");
+
+        // Add main panel to the JFrame
+        add(mainPanel);
 
         // Maximize the window to fill the entire screen
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -45,6 +58,11 @@ public class HomeScreen extends JFrame {
 
             // Set the cursor to a hand cursor when hovering over the button
             submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            // Add action listener to the submit button
+            submitButton.addActionListener(e -> {
+                cardLayout.show(mainPanel, "Lobby"); // Switch to the Lobby screen
+            });
 
             // Create a panel for the input and button
             JPanel inputPanel = new JPanel();
@@ -190,12 +208,22 @@ public class HomeScreen extends JFrame {
 
         public PlaceholderTextField(String placeholder) {
             this.placeholder = placeholder;
+
+            // Set the placeholder font (size 20, bold)
+            placeholderFont = new Font("Arial", Font.BOLD, 20);
+            setFont(placeholderFont); // Set the same font for the text field
             setForeground(Color.GRAY); // Set placeholder color
             setOpaque(false); // Make the text field transparent
             setBorder(BorderFactory.createEmptyBorder()); // Remove default border
 
-            // Set the placeholder font (size 18, bold)
-            placeholderFont = new Font("Arial", Font.BOLD, 20); // Change "Arial" to your preferred font
+            // Set padding (left, top, right, bottom)
+            setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createEmptyBorder(0, 10, 0, 0), // Left padding of 10 pixels
+                    BorderFactory.createLineBorder(Color.GRAY, 1) // Optional: Add a border if desired
+            ));
+
+            // Set the text color for user input
+            setForeground(Color.BLACK); // Change this color to your desired input text color
         }
 
         @Override
@@ -216,7 +244,7 @@ public class HomeScreen extends JFrame {
             if (getText().isEmpty()) {
                 g2d.setColor(Color.GRAY); // Set color for placeholder text
                 g2d.setFont(placeholderFont); // Set the placeholder font
-                g2d.drawString(placeholder, 5, getHeight() / 2 + g2d.getFontMetrics().getAscent() / 2 - 2);
+                g2d.drawString(placeholder, 15, getHeight() / 2 + g2d.getFontMetrics().getAscent() / 2 - 2);
             }
         }
 
