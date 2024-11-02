@@ -4,6 +4,7 @@ import java.awt.*;
 public class HomeScreen extends JFrame {
     private JPanel mainPanel; // Main panel to hold different screens
     private CardLayout cardLayout; // CardLayout to manage screens
+    private String userName;
 
     public HomeScreen() {
         setTitle("Pac-Man GRPC");
@@ -61,6 +62,8 @@ public class HomeScreen extends JFrame {
 
             // Add action listener to the submit button
             submitButton.addActionListener(e -> {
+                userName = inputField.getText(); // Store the user's name
+                System.out.println("Username: " + userName); // Print the name to the console (for testing)
                 cardLayout.show(mainPanel, "Lobby"); // Switch to the Lobby screen
             });
 
