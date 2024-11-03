@@ -1,12 +1,46 @@
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
+import pacman.*;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class HomeScreen extends JFrame {
     private JPanel mainPanel; // Main panel to hold different screens
     private CardLayout cardLayout; // CardLayout to manage screens
     private String userName;
 
+    private ManagedChannel channel;
+    private LobbyServiceGrpc.LobbyServiceBlockingStub blockingStub;
+
+    public void leaveLobby() {
+        LeaveRequest request = LeaveRequest.newBuilder().setPlayerName(userName).build();
+        LeaveResponse response;
+        try {
+            response = blockingStub.leaveLobby(request);
+            System.out.println(response.getMessage());
+        } catch (StatusRuntimeException e) {
+            System.out.println("Failed to leave lobby: " + e.getStatus());
+        }
+    }
+
     public HomeScreen() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (userName != null && !userName.isEmpty()) {
+                    leaveLobby(); // Call the leaveLobby method when the window is closing
+                }
+                channel.shutdown();
+                dispose(); // Dispose of the frame
+            }
+        });
+
         setTitle("Pac-Man GRPC");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -17,11 +51,6 @@ public class HomeScreen extends JFrame {
         // Add the BackgroundPanel (home screen)
         BackgroundPanel backgroundPanel = new BackgroundPanel();
         mainPanel.add(backgroundPanel, "Home");
-
-        // Add the LobbyScreen
-        LobbyScreen lobbyScreen = new LobbyScreen();
-        mainPanel.add(lobbyScreen, "Lobby");
-
         // Add main panel to the JFrame
         add(mainPanel);
 
@@ -29,6 +58,30 @@ public class HomeScreen extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null); // Center the window on the screen
         setVisible(true);
+        // Initialize gRPC channel and stub
+        initializeGrpc();
+    }
+
+    private void initializeGrpc() {
+        String target = "localhost:9090"; // Change this to your server address
+        channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+        blockingStub = LobbyServiceGrpc.newBlockingStub(channel);
+    }
+
+    private ArrayList<String> joinLobby() {
+        JoinRequest request = JoinRequest.newBuilder().setPlayerName(userName).build();
+        try {
+            JoinResponse response = blockingStub.joinLobby(request);
+            System.out.println(response.getMessage());
+            ArrayList<String> players = new ArrayList<>();
+            for (Integer i = 0; i < response.getPlayersList().size(); i++){
+                players.add(response.getPlayersList().get(i));
+            }
+            return players;
+        } catch (Exception e) {
+            System.out.println("Failed to join lobby: " + e.getMessage());
+        }
+        return null;
     }
 
     // Custom JPanel class to draw the GIF as a background
@@ -62,9 +115,15 @@ public class HomeScreen extends JFrame {
 
             // Add action listener to the submit button
             submitButton.addActionListener(e -> {
-                userName = inputField.getText(); // Store the user's name
-                System.out.println("Username: " + userName); // Print the name to the console (for testing)
-                cardLayout.show(mainPanel, "Lobby"); // Switch to the Lobby screen
+                if (inputField.getText() != null && !inputField.getText().isEmpty()) {
+                    userName = inputField.getText(); // Store the user's name
+                    System.out.println("Username: " + userName); // Print the name to the console (for testing)
+                    ArrayList<String> players = joinLobby();
+                    // Add the LobbyScreen
+                    LobbyScreen lobbyScreen = new LobbyScreen(players, userName, channel);
+                    mainPanel.add(lobbyScreen, "Lobby");
+                    cardLayout.show(mainPanel, "Lobby"); // Switch to the Lobby screen
+                }
             });
 
             // Create a panel for the input and button
@@ -109,7 +168,7 @@ public class HomeScreen extends JFrame {
 
 // Create the score boxes
             Color[] borderColors = {Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN, Color.PINK};
-            String [] numbers = {"1st", "2nd", "3rd", "4th", "5th"};
+            String[] numbers = {"1st", "2nd", "3rd", "4th", "5th"};
             for (int i = 0; i < 5; i++) {
                 JPanel box = new JPanel();
                 box.setBackground(Color.BLACK);

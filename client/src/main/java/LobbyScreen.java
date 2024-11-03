@@ -1,12 +1,37 @@
+import io.grpc.ManagedChannel;
+import io.grpc.stub.StreamObserver;
+import pacman.*;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class LobbyScreen extends JPanel {
     private ImageIcon backgroundImage;
     private ImageIcon logoImage;
     private ImageIcon startButtonImage;
+    private ArrayList<String> players;
+    private JPanel boxPanel;
+    private ArrayList<JPanel> playerBoxes;
+    private String userName;
+    private ManagedChannel channel;
+    private final LobbyServiceGrpc.LobbyServiceStub asyncStub;
+    private final String[] imagePaths = {
+            "client/src/main/assets/ghost_1.png", // Replace with actual image paths
+            "client/src/main/assets/ghost_2.png",
+            "client/src/main/assets/ghost_3.png",
+            "client/src/main/assets/ghost_4.png"
+    };
+    private final Color[] borderColors = {Color.RED, Color.YELLOW, Color.CYAN, Color.PINK}; // Different colors for the borders
 
-    public LobbyScreen() {
+    public LobbyScreen(ArrayList<String> playerNames, String playerName, ManagedChannel channel) {
+        players = playerNames;
+        userName = playerName;
+
+        this.channel = channel;
+        asyncStub = LobbyServiceGrpc.newStub(channel);
+        playerBoxes = new ArrayList<>();
+        System.out.println(channel);
         // Load the images
         backgroundImage = new ImageIcon("client/src/main/assets/pacman.gif");
         logoImage = new ImageIcon("client/src/main/assets/logo.png");
@@ -25,29 +50,24 @@ public class LobbyScreen extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 20))); // Adjust the height to your liking
 
         // Add a panel for the boxes
-        JPanel boxPanel = new JPanel();
+        boxPanel = new JPanel();
         boxPanel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Center the boxes
         boxPanel.setOpaque(false); // Make it transparent
-
-        // Define box properties
-        String[] names = {"Player 1", "Player 2", "Player 3", "Player 4"};
-        String[] imagePaths = {
-                "client/src/main/assets/ghost_1.png", // Replace with actual image paths
-                "client/src/main/assets/ghost_2.png",
-                "client/src/main/assets/ghost_3.png",
-                "client/src/main/assets/ghost_4.png"
-        };
-        Color[] borderColors = {Color.RED, Color.YELLOW, Color.CYAN, Color.PINK}; // Different colors for the borders
+        add(boxPanel);
 
         // Create boxes
-        for (int i = 0; i < 4; i++) {
-            JPanel box = createBox(borderColors[i], imagePaths[i], names[i]);
+        for (Integer i = 0; i < 4; i++) {
+            String name;
+            if (i < players.size()) {
+                name = players.get(i);
+            } else {
+                name = "Esperando jugador";
+            }
+            JPanel box = createBox(name, i);
+            playerBoxes.add(box);
             boxPanel.add(box);
-            boxPanel.add(Box.createRigidArea(new Dimension(20, 0))); // Space between boxes
+            boxPanel.add(Box.createRigidArea(new Dimension(20, 0)));
         }
-
-        // Add the box panel to the lobby screen
-        add(boxPanel);
 
         // Add vertical glue to center the content
         add(Box.createVerticalGlue());
@@ -65,6 +85,121 @@ public class LobbyScreen extends JPanel {
         // Center the button
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(startButton);
+        streamLobbyUpdates();
+    }
+
+    private JPanel createBox(String playerName, Integer index) {
+        JPanel box = createBox(borderColors[index], imagePaths[index], playerName);
+        return box;
+    }
+
+    private void addPlayerToBox(String playerName) {
+        // Find the index of the player in the players list
+        int index = players.size() - 1;
+
+        // Check if the player exists in the list
+        if (index != -1) {
+            // Update the player's name in the players list
+            players.set(index, playerName);
+
+            // Get the corresponding box
+            JPanel box = playerBoxes.get(index);
+
+            // Update the name label in the box
+            JLabel nameLabel = (JLabel) box.getComponent(1); // Assuming the name label is at index 1
+            nameLabel.setText(playerName);
+
+            // Repaint the box to reflect the changes
+            box.repaint();
+        } else {
+            System.out.println("Player not found: " + playerName);
+        }
+    }
+
+    private void removePlayerFromBox(String playerName) {
+        // Find the index of the player who left
+        int index = players.indexOf(playerName);
+        if (index == players.size() - 1) {
+            JPanel box = playerBoxes.get(index);
+            JLabel nameLabel = (JLabel) box.getComponent(1); // Assuming the name label is at index 1
+            nameLabel.setText("Esperando jugador");
+            box.repaint();
+            return;
+        }
+
+        // Check if the player exists in the list
+        if (index != -1) {
+            String nameAux;
+            for (int i = index + 1; i < players.size(); i++) {
+                // Update the name of the box for the player moving up
+                JPanel movingBox = playerBoxes.get(i - 1);
+                JLabel movingNameLabel = (JLabel) movingBox.getComponent(1);
+                String movingPlayerName = players.get(i);
+                movingNameLabel.setText(movingPlayerName); // Change to "Esperando jugador"
+                movingBox.repaint();
+                JPanel actualBox = playerBoxes.get(i);
+                JLabel actualNameLabel = (JLabel) actualBox.getComponent(1);
+                actualNameLabel.setText("Esperando jugador");
+                actualBox.repaint();
+            }
+            // Refresh the UI to reflect the changes
+        } else {
+            System.out.println("Player not found: " + playerName);
+        }
+    }
+
+    private void streamLobbyUpdates() {
+        StreamObserver<PlayerStatus> responseObserver = new StreamObserver<PlayerStatus>() {
+            @Override
+            public void onNext(PlayerStatus playerStatus) {
+                try{
+                    if (playerStatus.getCurrentPlayers() > players.size()) {
+                        System.out.println("Se unió " + playerStatus.getPlayerName());
+                        System.out.println("Jugadores actuales " + playerStatus.getCurrentPlayers());
+                        // A new player has joined
+                        String newPlayerName = playerStatus.getPlayerName();
+                        players.add(newPlayerName);
+                        addPlayerToBox(playerStatus.getPlayerName()); // Refresh the UI
+                    } else if (playerStatus.getCurrentPlayers() < players.size()) {
+                        System.out.println("Se Salió " + playerStatus.getPlayerName());
+                        System.out.println("Jugadores actuales " + playerStatus.getCurrentPlayers());
+                        // A player has left
+                        String leavingPlayerName = playerStatus.getPlayerName();
+                        removePlayerFromBox(leavingPlayerName);
+                        players.remove(leavingPlayerName);
+                    }
+                }catch(Exception e){
+                    System.err.println("Error en onNext: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                System.out.println("Error streaming updates: " + throwable.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Streaming updates completed.");
+            }
+        };
+
+        // Create a StreamObserver to send updates
+        StreamObserver<LobbyUpdate> requestObserver = asyncStub.streamLobby(responseObserver);
+
+        // Send updates to the server
+        try {
+            LobbyUpdate update = LobbyUpdate.newBuilder()
+                    .setPlayerName(userName)
+                    .setIsJoining(true)
+                    .build();
+            requestObserver.onNext(update);
+            System.out.println("Update sent for player: " + userName);
+        } catch (Exception e) {
+            System.err.println("Failed to send update: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private JPanel createBox(Color borderColor, String imagePath, String name) {
