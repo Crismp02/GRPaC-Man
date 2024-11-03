@@ -67,6 +67,7 @@ func (s *server) StreamLobby(stream pb.LobbyService_StreamLobbyServer) error {
 	for {
 		update, err := stream.Recv()
 		if err != nil {
+			log.Printf("Error receiving update: %v", err)
 			return err
 		}
 
