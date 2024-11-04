@@ -28,7 +28,7 @@ public class LobbyScreen extends JPanel {
     private final Color[] borderColors = {Color.RED, Color.YELLOW, Color.CYAN, Color.PINK}; // Different colors for the borders
     private Clip backgroundMusic;
 
-    public LobbyScreen(ArrayList<String> playerNames, String playerName, ManagedChannel channel) {
+    public LobbyScreen(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout) {
         players = playerNames;
         userName = playerName;
 

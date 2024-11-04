@@ -1,12 +1,45 @@
+import io.grpc.ManagedChannel;
+import io.grpc.StatusRuntimeException;
+import pacman.LeaveRequest;
+import pacman.LeaveResponse;
+import pacman.LobbyServiceGrpc;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class GameOverScreen extends JPanel {
+    static class PlayerScore {
+        public String name;
+        public int score;
+    }
     private ImageIcon backgroundImage;
     private ImageIcon logoImage;
     private ImageIcon startButtonImage;
+    private LobbyServiceGrpc.LobbyServiceBlockingStub blockingStub;
+    private String userName;
+    private JPanel mainPanel; // Main panel to hold different screens
+    private CardLayout cardLayout;
 
-    public GameOverScreen() {
+    public void leaveLobby() {
+        LeaveRequest request = LeaveRequest.newBuilder().setPlayerName(userName).build();
+        LeaveResponse response;
+        try {
+            response = blockingStub.leaveLobby(request);
+            System.out.println(response.getMessage());
+        } catch (StatusRuntimeException e) {
+            System.out.println("Failed to leave lobby: " + e.getStatus());
+        }
+    }
+
+    public GameOverScreen(String userName, ManagedChannel channel, ArrayList<PlayerScore> playerScores, JPanel mainPanel, CardLayout cardLayout) {
+        this.userName = userName;
+        blockingStub = LobbyServiceGrpc.newBlockingStub(channel);
+        this.mainPanel = mainPanel; // Store reference to main panel
+        this.cardLayout = cardLayout; // Store reference to card layout
+
         // Load the images
         backgroundImage = new ImageIcon("client/src/main/assets/pacman.gif");
         logoImage = new ImageIcon("client/src/main/assets/logo.png");
@@ -40,7 +73,7 @@ public class GameOverScreen extends JPanel {
         boxPanel.setOpaque(false); // Make it transparent
 
         // Define box properties
-        String[] numbers = {"1st", "2nd", "3rd", "4th", "5th"};
+        String[] numbers = {"1st", "2nd", "3rd", "4th"};
         String[] names = {"Player 1", "Player 2", "Player 3", "Player 4"};
         String[] imagePaths = {
                 "client/src/main/assets/ghost_1.png", // Replace with actual image paths
@@ -51,9 +84,11 @@ public class GameOverScreen extends JPanel {
         Color[] borderColors = {Color.RED, Color.YELLOW, Color.CYAN, Color.PINK}; // Different colors for the borders
         String[] scores = {"100", "200", "150", "250"}; // Replace with actual scores
 
+        playerScores.sort(Comparator.comparingInt(ps -> ps.score));
+
         // Create boxes
-        for (int i = 0; i < 4; i++) {
-            JPanel box = createBox(borderColors[i], imagePaths[i], names[i], numbers[i], scores[i]); // Pass the score
+        for (int i = 0; i < playerScores.size(); i++) {
+            JPanel box = createBox(borderColors[i], imagePaths[i], playerScores.get(i).name, numbers[i], String.valueOf(playerScores.get(i).score)); // Pass the score
             boxPanel.add(box);
             boxPanel.add(Box.createRigidArea(new Dimension(20, 0))); // Space between boxes
         }
@@ -76,6 +111,11 @@ public class GameOverScreen extends JPanel {
 
         // Center the button
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startButton.addActionListener(e -> {
+            leaveLobby();
+            channel.shutdown();
+            cardLayout.show(mainPanel, "Home");
+        });
         add(startButton);
     }
 

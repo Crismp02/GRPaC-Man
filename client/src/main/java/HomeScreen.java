@@ -155,7 +155,7 @@ public class HomeScreen extends JFrame {
                     System.out.println("Username: " + userName); // Print the name to the console (for testing)
                     ArrayList<String> players = joinLobby();
                     // Add the LobbyScreen
-                    LobbyScreen lobbyScreen = new LobbyScreen(players, userName, channel);
+                    LobbyScreen lobbyScreen = new LobbyScreen(players, userName, channel, mainPanel, cardLayout);
                     mainPanel.add(lobbyScreen, "Lobby");
                     cardLayout.show(mainPanel, "Lobby"); // Switch to the Lobby screen
                     stopBackgroundMusic();
