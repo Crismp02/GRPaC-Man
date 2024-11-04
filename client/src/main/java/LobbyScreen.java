@@ -1,6 +1,9 @@
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import pacman.*;
+import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +26,7 @@ public class LobbyScreen extends JPanel {
             "client/src/main/assets/ghost_4.png"
     };
     private final Color[] borderColors = {Color.RED, Color.YELLOW, Color.CYAN, Color.PINK}; // Different colors for the borders
+    private Clip backgroundMusic;
 
     public LobbyScreen(ArrayList<String> playerNames, String playerName, ManagedChannel channel) {
         players = playerNames;
@@ -36,6 +40,8 @@ public class LobbyScreen extends JPanel {
         backgroundImage = new ImageIcon("client/src/main/assets/pacman.gif");
         logoImage = new ImageIcon("client/src/main/assets/logo.png");
         startButtonImage = new ImageIcon("client/src/main/assets/start_button.png"); // Load the start button image
+
+        playBackgroundMusic("client/src/main/assets/pacman_theme.wav");
 
         // Set the layout
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -86,10 +92,30 @@ public class LobbyScreen extends JPanel {
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         startButton.addActionListener(e -> {
             startGame();
+            stopBackgroundMusic();
         });
         add(startButton);
         streamLobbyUpdates();
         streamGameStartNotifications();
+    }
+
+    private void playBackgroundMusic(String filePath) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
+            backgroundMusic = AudioSystem.getClip();
+            backgroundMusic.open(audioInputStream);
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY); // Loop the music
+            backgroundMusic.start(); // Start playing the music
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace(); // Handle exceptions
+        }
+    }
+
+    // Method to stop the background music
+    private void stopBackgroundMusic() {
+        if (backgroundMusic != null && backgroundMusic.isRunning()) {
+            backgroundMusic.stop(); // Stop the music
+        }
     }
 
     private JPanel createBox(String playerName, Integer index) {

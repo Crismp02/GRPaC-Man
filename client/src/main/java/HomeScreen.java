@@ -2,6 +2,9 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import pacman.*;
+import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +17,7 @@ public class HomeScreen extends JFrame {
     private JPanel mainPanel; // Main panel to hold different screens
     private CardLayout cardLayout; // CardLayout to manage screens
     private String userName;
+    private Clip backgroundMusic;
 
     private ManagedChannel channel;
     private LobbyServiceGrpc.LobbyServiceBlockingStub blockingStub;
@@ -55,6 +59,7 @@ public class HomeScreen extends JFrame {
         // Add the BackgroundPanel (home screen)
         BackgroundPanel backgroundPanel = new BackgroundPanel();
         mainPanel.add(backgroundPanel, "Home");
+
         // Add main panel to the JFrame
         add(mainPanel);
 
@@ -62,6 +67,20 @@ public class HomeScreen extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null); // Center the window on the screen
         setVisible(true);
+
+        playBackgroundMusic("client/src/main/assets/pacman_theme.wav");
+    }
+
+    private void playBackgroundMusic(String filePath) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
+            backgroundMusic = AudioSystem.getClip();
+            backgroundMusic.open(audioInputStream);
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY); // Loop the music
+            backgroundMusic.start(); // Start playing the music
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace(); // Handle exceptions
+        }
     }
 
     private void initializeGrpc() {
@@ -139,6 +158,7 @@ public class HomeScreen extends JFrame {
                     LobbyScreen lobbyScreen = new LobbyScreen(players, userName, channel);
                     mainPanel.add(lobbyScreen, "Lobby");
                     cardLayout.show(mainPanel, "Lobby"); // Switch to the Lobby screen
+                    stopBackgroundMusic();
                 }
             });
 
@@ -276,6 +296,13 @@ public class HomeScreen extends JFrame {
             public Dimension getPreferredSize() {
                 return new Dimension(800, 300); // Set the preferred size for the logo panel
             }
+        }
+    }
+
+    // Method to stop the background music
+    private void stopBackgroundMusic() {
+        if (backgroundMusic != null && backgroundMusic.isRunning()) {
+            backgroundMusic.stop(); // Stop the music
         }
     }
 
