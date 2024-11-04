@@ -45,6 +45,30 @@ public  abstract class LobbyService
         pacman.ScoreUpdate request,
         com.google.protobuf.RpcCallback<pacman.ScoreUpdate> done);
 
+    /**
+     * <code>rpc StartGame(.pacman.StartGameRequest) returns (.pacman.StartGameResponse);</code>
+     */
+    public abstract void startGame(
+        com.google.protobuf.RpcController controller,
+        pacman.StartGameRequest request,
+        com.google.protobuf.RpcCallback<pacman.StartGameResponse> done);
+
+    /**
+     * <code>rpc StreamGameStart(stream .pacman.GameStartUpdate) returns (stream .pacman.GameStartNotification);</code>
+     */
+    public abstract void streamGameStart(
+        com.google.protobuf.RpcController controller,
+        pacman.GameStartUpdate request,
+        com.google.protobuf.RpcCallback<pacman.GameStartNotification> done);
+
+    /**
+     * <code>rpc GetTopScores(.pacman.TopScoresRequest) returns (.pacman.TopScoresResponse);</code>
+     */
+    public abstract void getTopScores(
+        com.google.protobuf.RpcController controller,
+        pacman.TopScoresRequest request,
+        com.google.protobuf.RpcCallback<pacman.TopScoresResponse> done);
+
   }
 
   public static com.google.protobuf.Service newReflectiveService(
@@ -82,6 +106,30 @@ public  abstract class LobbyService
         impl.streamScores(controller, request, done);
       }
 
+      @java.lang.Override
+      public  void startGame(
+          com.google.protobuf.RpcController controller,
+          pacman.StartGameRequest request,
+          com.google.protobuf.RpcCallback<pacman.StartGameResponse> done) {
+        impl.startGame(controller, request, done);
+      }
+
+      @java.lang.Override
+      public  void streamGameStart(
+          com.google.protobuf.RpcController controller,
+          pacman.GameStartUpdate request,
+          com.google.protobuf.RpcCallback<pacman.GameStartNotification> done) {
+        impl.streamGameStart(controller, request, done);
+      }
+
+      @java.lang.Override
+      public  void getTopScores(
+          com.google.protobuf.RpcController controller,
+          pacman.TopScoresRequest request,
+          com.google.protobuf.RpcCallback<pacman.TopScoresResponse> done) {
+        impl.getTopScores(controller, request, done);
+      }
+
     };
   }
 
@@ -112,6 +160,12 @@ public  abstract class LobbyService
             return impl.streamLobby(controller, (pacman.LobbyUpdate)request);
           case 3:
             return impl.streamScores(controller, (pacman.ScoreUpdate)request);
+          case 4:
+            return impl.startGame(controller, (pacman.StartGameRequest)request);
+          case 5:
+            return impl.streamGameStart(controller, (pacman.GameStartUpdate)request);
+          case 6:
+            return impl.getTopScores(controller, (pacman.TopScoresRequest)request);
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -134,6 +188,12 @@ public  abstract class LobbyService
             return pacman.LobbyUpdate.getDefaultInstance();
           case 3:
             return pacman.ScoreUpdate.getDefaultInstance();
+          case 4:
+            return pacman.StartGameRequest.getDefaultInstance();
+          case 5:
+            return pacman.GameStartUpdate.getDefaultInstance();
+          case 6:
+            return pacman.TopScoresRequest.getDefaultInstance();
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -156,6 +216,12 @@ public  abstract class LobbyService
             return pacman.PlayerStatus.getDefaultInstance();
           case 3:
             return pacman.ScoreUpdate.getDefaultInstance();
+          case 4:
+            return pacman.StartGameResponse.getDefaultInstance();
+          case 5:
+            return pacman.GameStartNotification.getDefaultInstance();
+          case 6:
+            return pacman.TopScoresResponse.getDefaultInstance();
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -195,6 +261,30 @@ public  abstract class LobbyService
       com.google.protobuf.RpcController controller,
       pacman.ScoreUpdate request,
       com.google.protobuf.RpcCallback<pacman.ScoreUpdate> done);
+
+  /**
+   * <code>rpc StartGame(.pacman.StartGameRequest) returns (.pacman.StartGameResponse);</code>
+   */
+  public abstract void startGame(
+      com.google.protobuf.RpcController controller,
+      pacman.StartGameRequest request,
+      com.google.protobuf.RpcCallback<pacman.StartGameResponse> done);
+
+  /**
+   * <code>rpc StreamGameStart(stream .pacman.GameStartUpdate) returns (stream .pacman.GameStartNotification);</code>
+   */
+  public abstract void streamGameStart(
+      com.google.protobuf.RpcController controller,
+      pacman.GameStartUpdate request,
+      com.google.protobuf.RpcCallback<pacman.GameStartNotification> done);
+
+  /**
+   * <code>rpc GetTopScores(.pacman.TopScoresRequest) returns (.pacman.TopScoresResponse);</code>
+   */
+  public abstract void getTopScores(
+      com.google.protobuf.RpcController controller,
+      pacman.TopScoresRequest request,
+      com.google.protobuf.RpcCallback<pacman.TopScoresResponse> done);
 
   public static final
       com.google.protobuf.Descriptors.ServiceDescriptor
@@ -238,6 +328,21 @@ public  abstract class LobbyService
           com.google.protobuf.RpcUtil.<pacman.ScoreUpdate>specializeCallback(
             done));
         return;
+      case 4:
+        this.startGame(controller, (pacman.StartGameRequest)request,
+          com.google.protobuf.RpcUtil.<pacman.StartGameResponse>specializeCallback(
+            done));
+        return;
+      case 5:
+        this.streamGameStart(controller, (pacman.GameStartUpdate)request,
+          com.google.protobuf.RpcUtil.<pacman.GameStartNotification>specializeCallback(
+            done));
+        return;
+      case 6:
+        this.getTopScores(controller, (pacman.TopScoresRequest)request,
+          com.google.protobuf.RpcUtil.<pacman.TopScoresResponse>specializeCallback(
+            done));
+        return;
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -260,6 +365,12 @@ public  abstract class LobbyService
         return pacman.LobbyUpdate.getDefaultInstance();
       case 3:
         return pacman.ScoreUpdate.getDefaultInstance();
+      case 4:
+        return pacman.StartGameRequest.getDefaultInstance();
+      case 5:
+        return pacman.GameStartUpdate.getDefaultInstance();
+      case 6:
+        return pacman.TopScoresRequest.getDefaultInstance();
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -282,6 +393,12 @@ public  abstract class LobbyService
         return pacman.PlayerStatus.getDefaultInstance();
       case 3:
         return pacman.ScoreUpdate.getDefaultInstance();
+      case 4:
+        return pacman.StartGameResponse.getDefaultInstance();
+      case 5:
+        return pacman.GameStartNotification.getDefaultInstance();
+      case 6:
+        return pacman.TopScoresResponse.getDefaultInstance();
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -362,6 +479,51 @@ public  abstract class LobbyService
           pacman.ScoreUpdate.class,
           pacman.ScoreUpdate.getDefaultInstance()));
     }
+
+    public  void startGame(
+        com.google.protobuf.RpcController controller,
+        pacman.StartGameRequest request,
+        com.google.protobuf.RpcCallback<pacman.StartGameResponse> done) {
+      channel.callMethod(
+        getDescriptor().getMethods().get(4),
+        controller,
+        request,
+        pacman.StartGameResponse.getDefaultInstance(),
+        com.google.protobuf.RpcUtil.generalizeCallback(
+          done,
+          pacman.StartGameResponse.class,
+          pacman.StartGameResponse.getDefaultInstance()));
+    }
+
+    public  void streamGameStart(
+        com.google.protobuf.RpcController controller,
+        pacman.GameStartUpdate request,
+        com.google.protobuf.RpcCallback<pacman.GameStartNotification> done) {
+      channel.callMethod(
+        getDescriptor().getMethods().get(5),
+        controller,
+        request,
+        pacman.GameStartNotification.getDefaultInstance(),
+        com.google.protobuf.RpcUtil.generalizeCallback(
+          done,
+          pacman.GameStartNotification.class,
+          pacman.GameStartNotification.getDefaultInstance()));
+    }
+
+    public  void getTopScores(
+        com.google.protobuf.RpcController controller,
+        pacman.TopScoresRequest request,
+        com.google.protobuf.RpcCallback<pacman.TopScoresResponse> done) {
+      channel.callMethod(
+        getDescriptor().getMethods().get(6),
+        controller,
+        request,
+        pacman.TopScoresResponse.getDefaultInstance(),
+        com.google.protobuf.RpcUtil.generalizeCallback(
+          done,
+          pacman.TopScoresResponse.class,
+          pacman.TopScoresResponse.getDefaultInstance()));
+    }
   }
 
   public static BlockingInterface newBlockingStub(
@@ -388,6 +550,21 @@ public  abstract class LobbyService
     public pacman.ScoreUpdate streamScores(
         com.google.protobuf.RpcController controller,
         pacman.ScoreUpdate request)
+        throws com.google.protobuf.ServiceException;
+
+    public pacman.StartGameResponse startGame(
+        com.google.protobuf.RpcController controller,
+        pacman.StartGameRequest request)
+        throws com.google.protobuf.ServiceException;
+
+    public pacman.GameStartNotification streamGameStart(
+        com.google.protobuf.RpcController controller,
+        pacman.GameStartUpdate request)
+        throws com.google.protobuf.ServiceException;
+
+    public pacman.TopScoresResponse getTopScores(
+        com.google.protobuf.RpcController controller,
+        pacman.TopScoresRequest request)
         throws com.google.protobuf.ServiceException;
   }
 
@@ -443,6 +620,42 @@ public  abstract class LobbyService
         controller,
         request,
         pacman.ScoreUpdate.getDefaultInstance());
+    }
+
+
+    public pacman.StartGameResponse startGame(
+        com.google.protobuf.RpcController controller,
+        pacman.StartGameRequest request)
+        throws com.google.protobuf.ServiceException {
+      return (pacman.StartGameResponse) channel.callBlockingMethod(
+        getDescriptor().getMethods().get(4),
+        controller,
+        request,
+        pacman.StartGameResponse.getDefaultInstance());
+    }
+
+
+    public pacman.GameStartNotification streamGameStart(
+        com.google.protobuf.RpcController controller,
+        pacman.GameStartUpdate request)
+        throws com.google.protobuf.ServiceException {
+      return (pacman.GameStartNotification) channel.callBlockingMethod(
+        getDescriptor().getMethods().get(5),
+        controller,
+        request,
+        pacman.GameStartNotification.getDefaultInstance());
+    }
+
+
+    public pacman.TopScoresResponse getTopScores(
+        com.google.protobuf.RpcController controller,
+        pacman.TopScoresRequest request)
+        throws com.google.protobuf.ServiceException {
+      return (pacman.TopScoresResponse) channel.callBlockingMethod(
+        getDescriptor().getMethods().get(6),
+        controller,
+        request,
+        pacman.TopScoresResponse.getDefaultInstance());
     }
 
   }

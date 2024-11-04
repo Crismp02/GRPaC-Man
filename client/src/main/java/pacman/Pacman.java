@@ -60,6 +60,41 @@ public final class Pacman {
   static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pacman_PlayerStatus_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_StartGameRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_StartGameRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_StartGameResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_StartGameResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_GameStartUpdate_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_GameStartUpdate_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_GameStartNotification_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_GameStartNotification_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_ScoreHistory_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_ScoreHistory_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_TopScoresRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_TopScoresRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_TopScoresResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_TopScoresResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -77,14 +112,27 @@ public final class Pacman {
       "aveResponse\022\017\n\007message\030\001 \001(\t\"4\n\013LobbyUpd" +
       "ate\022\022\n\nplayerName\030\001 \001(\t\022\021\n\tisJoining\030\002 \001" +
       "(\010\":\n\014PlayerStatus\022\022\n\nplayerName\030\001 \001(\t\022\026" +
-      "\n\016currentPlayers\030\002 \001(\0052\375\001\n\014LobbyService\022" +
-      "6\n\tJoinLobby\022\023.pacman.JoinRequest\032\024.pacm" +
-      "an.JoinResponse\0229\n\nLeaveLobby\022\024.pacman.L" +
-      "eaveRequest\032\025.pacman.LeaveResponse\022<\n\013St" +
-      "reamLobby\022\023.pacman.LobbyUpdate\032\024.pacman." +
-      "PlayerStatus(\0010\001\022<\n\014StreamScores\022\023.pacma" +
-      "n.ScoreUpdate\032\023.pacman.ScoreUpdate(\0010\001B\024" +
-      "P\001Z\roperator/grpc\210\001\001b\006proto3"
+      "\n\016currentPlayers\030\002 \001(\005\"&\n\020StartGameReque" +
+      "st\022\022\n\nplayerName\030\001 \001(\t\"$\n\021StartGameRespo" +
+      "nse\022\017\n\007message\030\001 \001(\t\"%\n\017GameStartUpdate\022" +
+      "\022\n\nplayerName\030\001 \001(\t\"(\n\025GameStartNotifica" +
+      "tion\022\017\n\007message\030\001 \001(\t\"1\n\014ScoreHistory\022\022\n" +
+      "\nplayerName\030\001 \001(\t\022\r\n\005score\030\002 \001(\005\"\022\n\020TopS" +
+      "coresRequest\"9\n\021TopScoresResponse\022$\n\006sco" +
+      "res\030\001 \003(\0132\024.pacman.ScoreHistory2\323\003\n\014Lobb" +
+      "yService\0226\n\tJoinLobby\022\023.pacman.JoinReque" +
+      "st\032\024.pacman.JoinResponse\0229\n\nLeaveLobby\022\024" +
+      ".pacman.LeaveRequest\032\025.pacman.LeaveRespo" +
+      "nse\022<\n\013StreamLobby\022\023.pacman.LobbyUpdate\032" +
+      "\024.pacman.PlayerStatus(\0010\001\022<\n\014StreamScore" +
+      "s\022\023.pacman.ScoreUpdate\032\023.pacman.ScoreUpd" +
+      "ate(\0010\001\022@\n\tStartGame\022\030.pacman.StartGameR" +
+      "equest\032\031.pacman.StartGameResponse\022M\n\017Str" +
+      "eamGameStart\022\027.pacman.GameStartUpdate\032\035." +
+      "pacman.GameStartNotification(\0010\001\022C\n\014GetT" +
+      "opScores\022\030.pacman.TopScoresRequest\032\031.pac" +
+      "man.TopScoresResponseB\024P\001Z\roperator/grpc" +
+      "\210\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -132,6 +180,48 @@ public final class Pacman {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pacman_PlayerStatus_descriptor,
         new java.lang.String[] { "PlayerName", "CurrentPlayers", });
+    internal_static_pacman_StartGameRequest_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_pacman_StartGameRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_StartGameRequest_descriptor,
+        new java.lang.String[] { "PlayerName", });
+    internal_static_pacman_StartGameResponse_descriptor =
+      getDescriptor().getMessageTypes().get(8);
+    internal_static_pacman_StartGameResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_StartGameResponse_descriptor,
+        new java.lang.String[] { "Message", });
+    internal_static_pacman_GameStartUpdate_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_pacman_GameStartUpdate_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_GameStartUpdate_descriptor,
+        new java.lang.String[] { "PlayerName", });
+    internal_static_pacman_GameStartNotification_descriptor =
+      getDescriptor().getMessageTypes().get(10);
+    internal_static_pacman_GameStartNotification_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_GameStartNotification_descriptor,
+        new java.lang.String[] { "Message", });
+    internal_static_pacman_ScoreHistory_descriptor =
+      getDescriptor().getMessageTypes().get(11);
+    internal_static_pacman_ScoreHistory_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_ScoreHistory_descriptor,
+        new java.lang.String[] { "PlayerName", "Score", });
+    internal_static_pacman_TopScoresRequest_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_pacman_TopScoresRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_TopScoresRequest_descriptor,
+        new java.lang.String[] { });
+    internal_static_pacman_TopScoresResponse_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_pacman_TopScoresResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_TopScoresResponse_descriptor,
+        new java.lang.String[] { "Scores", });
     descriptor.resolveAllFeaturesImmutable();
   }
 

@@ -17,6 +17,7 @@ public class HomeScreen extends JFrame {
 
     private ManagedChannel channel;
     private LobbyServiceGrpc.LobbyServiceBlockingStub blockingStub;
+    private TopScoresResponse topScores;
 
     public void leaveLobby() {
         LeaveRequest request = LeaveRequest.newBuilder().setPlayerName(userName).build();
@@ -30,6 +31,8 @@ public class HomeScreen extends JFrame {
     }
 
     public HomeScreen() {
+        initializeGrpc();
+        getTopScores();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -48,6 +51,7 @@ public class HomeScreen extends JFrame {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
+
         // Add the BackgroundPanel (home screen)
         BackgroundPanel backgroundPanel = new BackgroundPanel();
         mainPanel.add(backgroundPanel, "Home");
@@ -58,14 +62,26 @@ public class HomeScreen extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null); // Center the window on the screen
         setVisible(true);
-        // Initialize gRPC channel and stub
-        initializeGrpc();
     }
 
     private void initializeGrpc() {
         String target = "localhost:9090"; // Change this to your server address
         channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
         blockingStub = LobbyServiceGrpc.newBlockingStub(channel);
+    }
+
+    public void getTopScores() {
+        // Create a request
+        TopScoresRequest request = TopScoresRequest.newBuilder()
+                .build(); // Add any necessary fields to the request
+
+        try {
+            // Call the GetTopScores method
+            topScores = blockingStub.getTopScores(request);
+            // Process the response
+        } catch (StatusRuntimeException e) {
+            System.err.println("RPC failed: " + e.getStatus());
+        }
     }
 
     private ArrayList<String> joinLobby() {
@@ -169,7 +185,7 @@ public class HomeScreen extends JFrame {
 // Create the score boxes
             Color[] borderColors = {Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN, Color.PINK};
             String[] numbers = {"1st", "2nd", "3rd", "4th", "5th"};
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < topScores.getScoresCount(); i++) {
                 JPanel box = new JPanel();
                 box.setBackground(Color.BLACK);
                 box.setBorder(BorderFactory.createLineBorder(borderColors[i], 10)); // 10px border
@@ -186,12 +202,12 @@ public class HomeScreen extends JFrame {
                 numberLabel.setFont(new Font("Arial", Font.BOLD, 42)); // Set font size
 
                 // Create name label
-                JLabel nameLabel = new JLabel("name", SwingConstants.CENTER);
+                JLabel nameLabel = new JLabel(topScores.getScores(i).getPlayerName(), SwingConstants.CENTER);
                 nameLabel.setForeground(Color.WHITE); // Set text color to white
                 nameLabel.setFont(new Font("Arial", Font.BOLD, 28)); // Set font size
 
                 // Create score label
-                JLabel scoreLabel = new JLabel("score", SwingConstants.CENTER);
+                JLabel scoreLabel = new JLabel(String.valueOf(topScores.getScores(i).getScore()), SwingConstants.CENTER);
                 scoreLabel.setForeground(Color.WHITE); // Set text color to white
                 scoreLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Set font size
 

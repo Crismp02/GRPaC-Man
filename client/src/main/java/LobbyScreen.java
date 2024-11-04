@@ -84,8 +84,12 @@ public class LobbyScreen extends JPanel {
 
         // Center the button
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startButton.addActionListener(e -> {
+            startGame();
+        });
         add(startButton);
         streamLobbyUpdates();
+        streamGameStartNotifications();
     }
 
     private JPanel createBox(String playerName, Integer index) {
@@ -200,6 +204,63 @@ public class LobbyScreen extends JPanel {
             System.err.println("Failed to send update: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void startGame() {
+        System.out.println("Start Game Button Pressed");
+        StartGameRequest request = StartGameRequest.newBuilder()
+                .setPlayerName(userName)
+                .build();
+
+        asyncStub.startGame(request, new StreamObserver<StartGameResponse>() {
+            @Override
+            public void onNext(StartGameResponse response) {
+                System.out.println(response.getMessage());
+                // You can also update the UI here if needed
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                System.err.println("Error starting game: " + throwable.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Game start request completed.");
+            }
+        });
+    }
+
+    private void streamGameStartNotifications() {
+        // Create a StreamObserver to handle incoming game start notifications
+        StreamObserver<GameStartNotification> responseObserver = new StreamObserver<GameStartNotification>() {
+            @Override
+            public void onNext(GameStartNotification notification) {
+                System.out.println("Game started: " + notification.getMessage());
+                // Update the UI to reflect the game start
+                JOptionPane.showMessageDialog(LobbyScreen.this, notification.getMessage(), "Game Notification", JOptionPane.INFORMATION_MESSAGE);
+                // Additional UI updates can be added here
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                System.err.println("Error streaming game start notifications: " + throwable.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Streaming game start notifications completed.");
+            }
+        };
+
+        // Call the server to start streaming game start notifications
+        StreamObserver<GameStartUpdate> requestObserver = asyncStub.streamGameStart(responseObserver);
+
+        // Notify the server that this client is ready to receive notifications
+        GameStartUpdate update = GameStartUpdate.newBuilder()
+                .setPlayerName(userName)
+                .build();
+        requestObserver.onNext(update);
     }
 
     private JPanel createBox(Color borderColor, String imagePath, String name) {

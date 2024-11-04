@@ -10,6 +10,10 @@ service LobbyService {
   rpc LeaveLobby(LeaveRequest) returns (LeaveResponse);
   rpc StreamLobby(stream LobbyUpdate) returns (stream PlayerStatus);
   rpc StreamScores(stream ScoreUpdate) returns (stream ScoreUpdate);
+  rpc StartGame(StartGameRequest) returns (StartGameResponse);
+  rpc StreamGameStart(stream GameStartUpdate) returns (stream GameStartNotification);
+  rpc GetTopScores(TopScoresRequest) returns (TopScoresResponse);
+  rpc InsertScore(InsertScoreRequest) returns (InsertScoreResponse);
 }
 
 message ScoreUpdate {
@@ -42,4 +46,45 @@ message LobbyUpdate {
 message PlayerStatus {
   string playerName = 1;
   int32 currentPlayers = 2; // Current number of players in the lobby
+}
+
+message StartGameRequest {
+  string playerName = 1; // The name of the player who is starting the game
+}
+
+message StartGameResponse {
+  string message = 1;
+}
+
+message GameStartUpdate {
+  string playerName = 1; // Indicates if the game has started
+}
+
+message GameStartNotification {
+  string message = 1; // Notification message
+}
+
+message ScoreHistory {
+  string playerName = 1; // Name of the player
+  int32 score = 2;       // Player's score
+}
+
+// New request message for getting top scores
+message TopScoresRequest {}
+
+// New response message for top scores
+message TopScoresResponse {
+  repeated ScoreHistory scores = 1; // List of top scores
+}
+
+// The request message for inserting a score
+message InsertScoreRequest {
+  string playerName = 1;
+  int32 score = 2;
+}
+
+// The response message for inserting a score
+message InsertScoreResponse {
+  bool success = 1;
+  string message = 2; // Optional message to provide feedback
 }

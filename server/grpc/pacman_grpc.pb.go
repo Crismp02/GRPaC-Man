@@ -19,10 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LobbyService_JoinLobby_FullMethodName    = "/pacman.LobbyService/JoinLobby"
-	LobbyService_LeaveLobby_FullMethodName   = "/pacman.LobbyService/LeaveLobby"
-	LobbyService_StreamLobby_FullMethodName  = "/pacman.LobbyService/StreamLobby"
-	LobbyService_StreamScores_FullMethodName = "/pacman.LobbyService/StreamScores"
+	LobbyService_JoinLobby_FullMethodName       = "/pacman.LobbyService/JoinLobby"
+	LobbyService_LeaveLobby_FullMethodName      = "/pacman.LobbyService/LeaveLobby"
+	LobbyService_StreamLobby_FullMethodName     = "/pacman.LobbyService/StreamLobby"
+	LobbyService_StreamScores_FullMethodName    = "/pacman.LobbyService/StreamScores"
+	LobbyService_StartGame_FullMethodName       = "/pacman.LobbyService/StartGame"
+	LobbyService_StreamGameStart_FullMethodName = "/pacman.LobbyService/StreamGameStart"
+	LobbyService_GetTopScores_FullMethodName    = "/pacman.LobbyService/GetTopScores"
+	LobbyService_InsertScore_FullMethodName     = "/pacman.LobbyService/InsertScore"
 )
 
 // LobbyServiceClient is the client API for LobbyService service.
@@ -33,6 +37,10 @@ type LobbyServiceClient interface {
 	LeaveLobby(ctx context.Context, in *LeaveRequest, opts ...grpc.CallOption) (*LeaveResponse, error)
 	StreamLobby(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[LobbyUpdate, PlayerStatus], error)
 	StreamScores(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ScoreUpdate, ScoreUpdate], error)
+	StartGame(ctx context.Context, in *StartGameRequest, opts ...grpc.CallOption) (*StartGameResponse, error)
+	StreamGameStart(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[GameStartUpdate, GameStartNotification], error)
+	GetTopScores(ctx context.Context, in *TopScoresRequest, opts ...grpc.CallOption) (*TopScoresResponse, error)
+	InsertScore(ctx context.Context, in *InsertScoreRequest, opts ...grpc.CallOption) (*InsertScoreResponse, error)
 }
 
 type lobbyServiceClient struct {
@@ -89,6 +97,49 @@ func (c *lobbyServiceClient) StreamScores(ctx context.Context, opts ...grpc.Call
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type LobbyService_StreamScoresClient = grpc.BidiStreamingClient[ScoreUpdate, ScoreUpdate]
 
+func (c *lobbyServiceClient) StartGame(ctx context.Context, in *StartGameRequest, opts ...grpc.CallOption) (*StartGameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartGameResponse)
+	err := c.cc.Invoke(ctx, LobbyService_StartGame_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lobbyServiceClient) StreamGameStart(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[GameStartUpdate, GameStartNotification], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &LobbyService_ServiceDesc.Streams[2], LobbyService_StreamGameStart_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[GameStartUpdate, GameStartNotification]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type LobbyService_StreamGameStartClient = grpc.BidiStreamingClient[GameStartUpdate, GameStartNotification]
+
+func (c *lobbyServiceClient) GetTopScores(ctx context.Context, in *TopScoresRequest, opts ...grpc.CallOption) (*TopScoresResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TopScoresResponse)
+	err := c.cc.Invoke(ctx, LobbyService_GetTopScores_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lobbyServiceClient) InsertScore(ctx context.Context, in *InsertScoreRequest, opts ...grpc.CallOption) (*InsertScoreResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InsertScoreResponse)
+	err := c.cc.Invoke(ctx, LobbyService_InsertScore_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LobbyServiceServer is the server API for LobbyService service.
 // All implementations must embed UnimplementedLobbyServiceServer
 // for forward compatibility.
@@ -97,6 +148,10 @@ type LobbyServiceServer interface {
 	LeaveLobby(context.Context, *LeaveRequest) (*LeaveResponse, error)
 	StreamLobby(grpc.BidiStreamingServer[LobbyUpdate, PlayerStatus]) error
 	StreamScores(grpc.BidiStreamingServer[ScoreUpdate, ScoreUpdate]) error
+	StartGame(context.Context, *StartGameRequest) (*StartGameResponse, error)
+	StreamGameStart(grpc.BidiStreamingServer[GameStartUpdate, GameStartNotification]) error
+	GetTopScores(context.Context, *TopScoresRequest) (*TopScoresResponse, error)
+	InsertScore(context.Context, *InsertScoreRequest) (*InsertScoreResponse, error)
 	mustEmbedUnimplementedLobbyServiceServer()
 }
 
@@ -118,6 +173,18 @@ func (UnimplementedLobbyServiceServer) StreamLobby(grpc.BidiStreamingServer[Lobb
 }
 func (UnimplementedLobbyServiceServer) StreamScores(grpc.BidiStreamingServer[ScoreUpdate, ScoreUpdate]) error {
 	return status.Errorf(codes.Unimplemented, "method StreamScores not implemented")
+}
+func (UnimplementedLobbyServiceServer) StartGame(context.Context, *StartGameRequest) (*StartGameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartGame not implemented")
+}
+func (UnimplementedLobbyServiceServer) StreamGameStart(grpc.BidiStreamingServer[GameStartUpdate, GameStartNotification]) error {
+	return status.Errorf(codes.Unimplemented, "method StreamGameStart not implemented")
+}
+func (UnimplementedLobbyServiceServer) GetTopScores(context.Context, *TopScoresRequest) (*TopScoresResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTopScores not implemented")
+}
+func (UnimplementedLobbyServiceServer) InsertScore(context.Context, *InsertScoreRequest) (*InsertScoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InsertScore not implemented")
 }
 func (UnimplementedLobbyServiceServer) mustEmbedUnimplementedLobbyServiceServer() {}
 func (UnimplementedLobbyServiceServer) testEmbeddedByValue()                      {}
@@ -190,6 +257,67 @@ func _LobbyService_StreamScores_Handler(srv interface{}, stream grpc.ServerStrea
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type LobbyService_StreamScoresServer = grpc.BidiStreamingServer[ScoreUpdate, ScoreUpdate]
 
+func _LobbyService_StartGame_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartGameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LobbyServiceServer).StartGame(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LobbyService_StartGame_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LobbyServiceServer).StartGame(ctx, req.(*StartGameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LobbyService_StreamGameStart_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(LobbyServiceServer).StreamGameStart(&grpc.GenericServerStream[GameStartUpdate, GameStartNotification]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type LobbyService_StreamGameStartServer = grpc.BidiStreamingServer[GameStartUpdate, GameStartNotification]
+
+func _LobbyService_GetTopScores_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TopScoresRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LobbyServiceServer).GetTopScores(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LobbyService_GetTopScores_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LobbyServiceServer).GetTopScores(ctx, req.(*TopScoresRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LobbyService_InsertScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InsertScoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LobbyServiceServer).InsertScore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LobbyService_InsertScore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LobbyServiceServer).InsertScore(ctx, req.(*InsertScoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LobbyService_ServiceDesc is the grpc.ServiceDesc for LobbyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -205,6 +333,18 @@ var LobbyService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "LeaveLobby",
 			Handler:    _LobbyService_LeaveLobby_Handler,
 		},
+		{
+			MethodName: "StartGame",
+			Handler:    _LobbyService_StartGame_Handler,
+		},
+		{
+			MethodName: "GetTopScores",
+			Handler:    _LobbyService_GetTopScores_Handler,
+		},
+		{
+			MethodName: "InsertScore",
+			Handler:    _LobbyService_InsertScore_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -216,6 +356,12 @@ var LobbyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "StreamScores",
 			Handler:       _LobbyService_StreamScores_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "StreamGameStart",
+			Handler:       _LobbyService_StreamGameStart_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

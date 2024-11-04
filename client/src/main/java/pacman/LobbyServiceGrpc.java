@@ -139,6 +139,99 @@ public final class LobbyServiceGrpc {
     return getStreamScoresMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pacman.StartGameRequest,
+      pacman.StartGameResponse> getStartGameMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "StartGame",
+      requestType = pacman.StartGameRequest.class,
+      responseType = pacman.StartGameResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pacman.StartGameRequest,
+      pacman.StartGameResponse> getStartGameMethod() {
+    io.grpc.MethodDescriptor<pacman.StartGameRequest, pacman.StartGameResponse> getStartGameMethod;
+    if ((getStartGameMethod = LobbyServiceGrpc.getStartGameMethod) == null) {
+      synchronized (LobbyServiceGrpc.class) {
+        if ((getStartGameMethod = LobbyServiceGrpc.getStartGameMethod) == null) {
+          LobbyServiceGrpc.getStartGameMethod = getStartGameMethod =
+              io.grpc.MethodDescriptor.<pacman.StartGameRequest, pacman.StartGameResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "StartGame"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pacman.StartGameRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pacman.StartGameResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new LobbyServiceMethodDescriptorSupplier("StartGame"))
+              .build();
+        }
+      }
+    }
+    return getStartGameMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pacman.GameStartUpdate,
+      pacman.GameStartNotification> getStreamGameStartMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "StreamGameStart",
+      requestType = pacman.GameStartUpdate.class,
+      responseType = pacman.GameStartNotification.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
+  public static io.grpc.MethodDescriptor<pacman.GameStartUpdate,
+      pacman.GameStartNotification> getStreamGameStartMethod() {
+    io.grpc.MethodDescriptor<pacman.GameStartUpdate, pacman.GameStartNotification> getStreamGameStartMethod;
+    if ((getStreamGameStartMethod = LobbyServiceGrpc.getStreamGameStartMethod) == null) {
+      synchronized (LobbyServiceGrpc.class) {
+        if ((getStreamGameStartMethod = LobbyServiceGrpc.getStreamGameStartMethod) == null) {
+          LobbyServiceGrpc.getStreamGameStartMethod = getStreamGameStartMethod =
+              io.grpc.MethodDescriptor.<pacman.GameStartUpdate, pacman.GameStartNotification>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "StreamGameStart"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pacman.GameStartUpdate.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pacman.GameStartNotification.getDefaultInstance()))
+              .setSchemaDescriptor(new LobbyServiceMethodDescriptorSupplier("StreamGameStart"))
+              .build();
+        }
+      }
+    }
+    return getStreamGameStartMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pacman.TopScoresRequest,
+      pacman.TopScoresResponse> getGetTopScoresMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetTopScores",
+      requestType = pacman.TopScoresRequest.class,
+      responseType = pacman.TopScoresResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pacman.TopScoresRequest,
+      pacman.TopScoresResponse> getGetTopScoresMethod() {
+    io.grpc.MethodDescriptor<pacman.TopScoresRequest, pacman.TopScoresResponse> getGetTopScoresMethod;
+    if ((getGetTopScoresMethod = LobbyServiceGrpc.getGetTopScoresMethod) == null) {
+      synchronized (LobbyServiceGrpc.class) {
+        if ((getGetTopScoresMethod = LobbyServiceGrpc.getGetTopScoresMethod) == null) {
+          LobbyServiceGrpc.getGetTopScoresMethod = getGetTopScoresMethod =
+              io.grpc.MethodDescriptor.<pacman.TopScoresRequest, pacman.TopScoresResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTopScores"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pacman.TopScoresRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pacman.TopScoresResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new LobbyServiceMethodDescriptorSupplier("GetTopScores"))
+              .build();
+        }
+      }
+    }
+    return getGetTopScoresMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -214,6 +307,27 @@ public final class LobbyServiceGrpc {
         io.grpc.stub.StreamObserver<pacman.ScoreUpdate> responseObserver) {
       return io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall(getStreamScoresMethod(), responseObserver);
     }
+
+    /**
+     */
+    default void startGame(pacman.StartGameRequest request,
+        io.grpc.stub.StreamObserver<pacman.StartGameResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getStartGameMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default io.grpc.stub.StreamObserver<pacman.GameStartUpdate> streamGameStart(
+        io.grpc.stub.StreamObserver<pacman.GameStartNotification> responseObserver) {
+      return io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall(getStreamGameStartMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void getTopScores(pacman.TopScoresRequest request,
+        io.grpc.stub.StreamObserver<pacman.TopScoresResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTopScoresMethod(), responseObserver);
+    }
   }
 
   /**
@@ -274,6 +388,30 @@ public final class LobbyServiceGrpc {
       return io.grpc.stub.ClientCalls.asyncBidiStreamingCall(
           getChannel().newCall(getStreamScoresMethod(), getCallOptions()), responseObserver);
     }
+
+    /**
+     */
+    public void startGame(pacman.StartGameRequest request,
+        io.grpc.stub.StreamObserver<pacman.StartGameResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getStartGameMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public io.grpc.stub.StreamObserver<pacman.GameStartUpdate> streamGameStart(
+        io.grpc.stub.StreamObserver<pacman.GameStartNotification> responseObserver) {
+      return io.grpc.stub.ClientCalls.asyncBidiStreamingCall(
+          getChannel().newCall(getStreamGameStartMethod(), getCallOptions()), responseObserver);
+    }
+
+    /**
+     */
+    public void getTopScores(pacman.TopScoresRequest request,
+        io.grpc.stub.StreamObserver<pacman.TopScoresResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetTopScoresMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -304,6 +442,20 @@ public final class LobbyServiceGrpc {
     public pacman.LeaveResponse leaveLobby(pacman.LeaveRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getLeaveLobbyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public pacman.StartGameResponse startGame(pacman.StartGameRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getStartGameMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public pacman.TopScoresResponse getTopScores(pacman.TopScoresRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetTopScoresMethod(), getCallOptions(), request);
     }
   }
 
@@ -338,12 +490,31 @@ public final class LobbyServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getLeaveLobbyMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pacman.StartGameResponse> startGame(
+        pacman.StartGameRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getStartGameMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pacman.TopScoresResponse> getTopScores(
+        pacman.TopScoresRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetTopScoresMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_JOIN_LOBBY = 0;
   private static final int METHODID_LEAVE_LOBBY = 1;
-  private static final int METHODID_STREAM_LOBBY = 2;
-  private static final int METHODID_STREAM_SCORES = 3;
+  private static final int METHODID_START_GAME = 2;
+  private static final int METHODID_GET_TOP_SCORES = 3;
+  private static final int METHODID_STREAM_LOBBY = 4;
+  private static final int METHODID_STREAM_SCORES = 5;
+  private static final int METHODID_STREAM_GAME_START = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -370,6 +541,14 @@ public final class LobbyServiceGrpc {
           serviceImpl.leaveLobby((pacman.LeaveRequest) request,
               (io.grpc.stub.StreamObserver<pacman.LeaveResponse>) responseObserver);
           break;
+        case METHODID_START_GAME:
+          serviceImpl.startGame((pacman.StartGameRequest) request,
+              (io.grpc.stub.StreamObserver<pacman.StartGameResponse>) responseObserver);
+          break;
+        case METHODID_GET_TOP_SCORES:
+          serviceImpl.getTopScores((pacman.TopScoresRequest) request,
+              (io.grpc.stub.StreamObserver<pacman.TopScoresResponse>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -386,6 +565,9 @@ public final class LobbyServiceGrpc {
         case METHODID_STREAM_SCORES:
           return (io.grpc.stub.StreamObserver<Req>) serviceImpl.streamScores(
               (io.grpc.stub.StreamObserver<pacman.ScoreUpdate>) responseObserver);
+        case METHODID_STREAM_GAME_START:
+          return (io.grpc.stub.StreamObserver<Req>) serviceImpl.streamGameStart(
+              (io.grpc.stub.StreamObserver<pacman.GameStartNotification>) responseObserver);
         default:
           throw new AssertionError();
       }
@@ -422,6 +604,27 @@ public final class LobbyServiceGrpc {
               pacman.ScoreUpdate,
               pacman.ScoreUpdate>(
                 service, METHODID_STREAM_SCORES)))
+        .addMethod(
+          getStartGameMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pacman.StartGameRequest,
+              pacman.StartGameResponse>(
+                service, METHODID_START_GAME)))
+        .addMethod(
+          getStreamGameStartMethod(),
+          io.grpc.stub.ServerCalls.asyncBidiStreamingCall(
+            new MethodHandlers<
+              pacman.GameStartUpdate,
+              pacman.GameStartNotification>(
+                service, METHODID_STREAM_GAME_START)))
+        .addMethod(
+          getGetTopScoresMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pacman.TopScoresRequest,
+              pacman.TopScoresResponse>(
+                service, METHODID_GET_TOP_SCORES)))
         .build();
   }
 
@@ -474,6 +677,9 @@ public final class LobbyServiceGrpc {
               .addMethod(getLeaveLobbyMethod())
               .addMethod(getStreamLobbyMethod())
               .addMethod(getStreamScoresMethod())
+              .addMethod(getStartGameMethod())
+              .addMethod(getStreamGameStartMethod())
+              .addMethod(getGetTopScoresMethod())
               .build();
         }
       }
