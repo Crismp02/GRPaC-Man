@@ -95,7 +95,7 @@ public class Model extends JPanel implements ActionListener {
         userName = playerName;
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
-
+        setPreferredSize(new Dimension(SCREEN_SIZE, SCREEN_SIZE));
         loadImages();
         initGhostImages();
         initVariables();
@@ -148,7 +148,7 @@ public class Model extends JPanel implements ActionListener {
     private void initVariables() {
 
         screenData = new short[N_BLOCKS * N_BLOCKS];
-        d = new Dimension(100000, 100000);
+        d = new Dimension(500, 500);
         ghost_x = new int[MAX_GHOSTS];
         ghost_dx = new int[MAX_GHOSTS];
         ghost_y = new int[MAX_GHOSTS];
@@ -585,45 +585,100 @@ public class Model extends JPanel implements ActionListener {
         g.drawString(timeText, SCREEN_SIZE / 2 - 50, SCREEN_SIZE + 16); // Ajusta la posición según sea necesario
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setColor(Color.black);
-        g2d.fillRect(0, 0, d.width, d.height);
+        // Example hex color code
+        String hexColor = "#020824";
+      // Convert hex to Color
+        Color customColor = Color.decode(hexColor);
+// Set the color for drawing
+        g2d.setColor(customColor);
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // Use getWidth() and getHeight() to fill the panel
 
+        // Draw the maze and game elements on the left side
+        g2d.translate(0, 0); // No translation needed, drawing starts at (0, 0)
         drawMaze(g2d);
+        if (inGame) {
+            playGame(g2d);
+        }
+
+        // Draw the score and timer
         drawScore(g2d);
         drawTimer(g2d);
+
+        // Define a right margin
+        int rightMargin = 500; // Set the desired margin in pixels
+
+// Draw the ranking text on the right side
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("Arial", Font.BOLD, 24));
+        String rankingText = "Ranking";
+        FontMetrics fm = g2d.getFontMetrics();
+        int rankingX = getWidth() - fm.stringWidth(rankingText) - rightMargin; // 20 pixels from the right edge
+        int rankingY = 30; // Positioning the text vertically
+        g2d.drawString(rankingText, rankingX, rankingY);
+
+// Draw the main ranking box
+        int boxWidth = 300; // Width of the ranking box
+        int boxHeight = 200; // Height of the ranking box
+        int boxX = getWidth() - boxWidth - rightMargin; // Positioning the box with right margin
+        int boxY = rankingY + 10; // Positioning below the ranking text
+
+// Draw the main ranking box with a black background and blue border
+        g2d.setColor(Color.BLACK); // Background color
+        g2d.fillRect(boxX, boxY, boxWidth, boxHeight); // Draw the main ranking box
+
+        g2d.setColor(Color.BLUE); // Border color
+        g2d.drawRect(boxX, boxY, boxWidth, boxHeight); // Draw the blue border
+
+        // Draw sub-boxes for names and scores
+        int padding = 5; // Padding between the main box and sub-boxes
+        int subBoxHeight = (boxHeight - (padding * 6)) / 4; // Height of each sub-box, considering padding
+        g2d.setFont(new Font("Arial", Font.PLAIN, 16)); // Font for sub-boxes
+
+        for (int i = 0; i < 4; i++) {
+            int subBoxY = boxY + padding + (i * (subBoxHeight + padding)); // Y position for each sub-box
+
+            // Draw sub-box with black background and blue border
+            g2d.setColor(Color.BLACK); // Sub-box background color
+            g2d.fillRect(boxX + padding, subBoxY + padding, boxWidth - (padding * 2), subBoxHeight); // Draw sub-box
+
+            g2d.setColor(Color.BLUE); // Border color for sub-box
+            g2d.drawRect(boxX + padding, subBoxY + padding, boxWidth - (padding * 2), subBoxHeight); // Draw sub-box border
+
+            // Draw "Name" and "Score" labels
+            g2d.setColor(Color.WHITE); // Text color
+            g2d.drawString("Name", boxX + 10 + padding, subBoxY + 20 + padding); // Positioning "Name"
+            g2d.drawString("Score", boxX + 100 + padding, subBoxY + 20 + padding); // Positioning "Score"
+        }
 
         if (canEatGhosts) {
             // Dibuja el texto "EAT!" en la parte inferior, al lado de los corazones
             g2d.setColor(Color.YELLOW);
             g2d.setFont(new Font("Arial", Font.BOLD, 24));
-            g2d.drawString("EAT!", SCREEN_SIZE / 2 - 30, SCREEN_SIZE / 2); // Ajusta la posición según sea necesario
+            g2d.drawString("EAT!", SCREEN_SIZE / 2 - 30, SCREEN_SIZE / 2); // Adjust position as needed
         }
 
         if (!inGame) {
-            // Dibuja el texto "EAT!" en la parte inferior, al lado de los corazones
+            // Draw the game over message
             g2d.setColor(Color.CYAN);
             g2d.setFont(new Font("Arial", Font.BOLD, 24));
-            g2d.drawString("¡Perdiste! :(", SCREEN_SIZE / 2 - 67, SCREEN_SIZE / 2); // Ajusta la posición según sea necesario
+            g2d.drawString("¡Perdiste! :(", SCREEN_SIZE / 2 - 67, SCREEN_SIZE / 2); // Adjust position as needed
         }
 
         if (!inGame && timeRemaining <= 0) {
-            // Si el tiempo se ha acabado, dibuja el mensaje
-            g2d.setColor(Color.cyan); // Color del mensaje
-            g2d.setFont(new Font("Arial", Font.BOLD, 24)); // Fuente del mensaje
+            // If the time has run out, draw the message
+            g2d.setColor(Color.cyan); // Color of the message
+            g2d.setFont(new Font("Arial", Font.BOLD, 24)); // Font of the message
             String message = "Se acabó el tiempo :(";
-            FontMetrics fm = g2d.getFontMetrics();
-            int x = (SCREEN_SIZE - fm.stringWidth(message)) / 2; // Centrar horizontalmente
-            int y = SCREEN_SIZE / 2; // Centrar verticalmente
-            g2d.drawString(message, x, y);
-        }
-
-        if (inGame) {
-            playGame(g2d);
+            FontMetrics fmMessage = g2d.getFontMetrics();
+            int messageX = (SCREEN_SIZE - fmMessage.stringWidth(message)) / 2; // Center horizontally
+            int messageY = SCREEN_SIZE / 2; // Center vertically
+            g2d.drawString(message, messageX, messageY);
         }
 
         Toolkit.getDefaultToolkit().sync();
