@@ -98,8 +98,8 @@ public class LobbyScreen extends JPanel {
         startButton.addActionListener(e -> {
             started = true;
             startGame();
-            //Model game = new Model(players, userName, channel, mainPanel, cardLayout);
-            //mainPanel.add(game, "Game");
+            Model game = new Model(players, userName, channel, mainPanel, cardLayout);
+            mainPanel.add(game, "Game");
             cardLayout.show(mainPanel, "Game"); // Switch to the Lobby screen
             stopBackgroundMusic();
         });
@@ -274,8 +274,8 @@ public class LobbyScreen extends JPanel {
                 System.out.println("Game started: " + notification.getMessage());
                 if (!started) {
                     started = true;
-                    //Model game = new Model(players, userName, channel, mainPanel, cardLayout);
-                    //mainPanel.add(game, "Game");
+                    Model game = new Model(players, userName, channel, mainPanel, cardLayout);
+                    mainPanel.add(game, "Game");
                     cardLayout.show(mainPanel, "Game"); // Switch to the Lobby screen
                     stopBackgroundMusic();
                 }

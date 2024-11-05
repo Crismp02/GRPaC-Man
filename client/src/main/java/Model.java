@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class Model extends JPanel implements ActionListener {
 
-    private JFrame frame;
+
     static class PlayerScore {
         public String name;
         public int score;
@@ -86,7 +86,7 @@ public class Model extends JPanel implements ActionListener {
     private int timeRemaining; // Tiempo restante en segundos
     private Timer countdownTimer; // Timer para el temporizador
 
-    public Model(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout, JFrame frame) {
+    public Model(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout) {
         for (Integer i = 0; i < playerNames.size(); i++) {
             PlayerScore player = new PlayerScore(playerNames.get(i), 0);
             playerScores.add(player);
@@ -95,7 +95,7 @@ public class Model extends JPanel implements ActionListener {
         userName = playerName;
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
-        this.frame = frame;
+
         loadImages();
         initGhostImages();
         initVariables();
@@ -620,8 +620,6 @@ public class Model extends JPanel implements ActionListener {
             int x = (SCREEN_SIZE - fm.stringWidth(message)) / 2; // Centrar horizontalmente
             int y = SCREEN_SIZE / 2; // Centrar verticalmente
             g2d.drawString(message, x, y);
-
-            frame.dispose();
         }
 
         if (inGame) {
