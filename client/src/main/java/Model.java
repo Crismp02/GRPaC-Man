@@ -579,7 +579,7 @@ public class Model extends JPanel implements ActionListener {
         req_dx = 0;  // Asegúrate de que req_dx se inicialice a 0
         req_dy = 0;  // Asegúrate de que req_dy se inicialice a 0
 
-        countdownTimer = new Timer(500, new ActionListener() {
+        countdownTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(timeRemaining > 0){
