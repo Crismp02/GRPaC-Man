@@ -10,6 +10,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class LobbyScreen extends JPanel {
+    private JPanel mainPanel; // Main panel to hold different screens
+    private CardLayout cardLayout; // CardLayout to manage screens
     private ImageIcon backgroundImage;
     private ImageIcon logoImage;
     private ImageIcon startButtonImage;
@@ -27,10 +29,13 @@ public class LobbyScreen extends JPanel {
     };
     private final Color[] borderColors = {Color.RED, Color.YELLOW, Color.CYAN, Color.PINK}; // Different colors for the borders
     private Clip backgroundMusic;
+    private boolean started = false;
 
     public LobbyScreen(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout) {
         players = playerNames;
         userName = playerName;
+        this.mainPanel = mainPanel;
+        this.cardLayout = cardLayout;
 
         this.channel = channel;
         asyncStub = LobbyServiceGrpc.newStub(channel);
@@ -91,7 +96,11 @@ public class LobbyScreen extends JPanel {
         // Center the button
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         startButton.addActionListener(e -> {
+            started = true;
             startGame();
+            Model game = new Model(players, userName, channel, mainPanel, cardLayout);
+            mainPanel.add(game, "Game");
+            cardLayout.show(mainPanel, "Game"); // Switch to the Lobby screen
             stopBackgroundMusic();
         });
         add(startButton);
@@ -263,9 +272,13 @@ public class LobbyScreen extends JPanel {
             @Override
             public void onNext(GameStartNotification notification) {
                 System.out.println("Game started: " + notification.getMessage());
-                // Update the UI to reflect the game start
-                JOptionPane.showMessageDialog(LobbyScreen.this, notification.getMessage(), "Game Notification", JOptionPane.INFORMATION_MESSAGE);
-                // Additional UI updates can be added here
+                if (!started) {
+                    started = true;
+                    Model game = new Model(players, userName, channel, mainPanel, cardLayout);
+                    mainPanel.add(game, "Game");
+                    cardLayout.show(mainPanel, "Game"); // Switch to the Lobby screen
+                    stopBackgroundMusic();
+                }
             }
 
             @Override

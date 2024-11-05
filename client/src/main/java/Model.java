@@ -1,3 +1,5 @@
+import io.grpc.ManagedChannel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,9 +10,22 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.image.BufferedImage;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 
 public class Model extends JPanel implements ActionListener {
-
+    static class PlayerScore {
+        public String name;
+        public int score;
+        public PlayerScore(String name, int score) {
+            this.name = name;
+            this.score = score;
+        }
+    }
+    private ArrayList<PlayerScore> playerScores = new ArrayList<>();
+    private JPanel mainPanel; // Main panel to hold different screens
+    private CardLayout cardLayout; // CardLayout to manage screens
+    private String userName;
+    private ManagedChannel channel;
     private final Font smallFont = new Font("Arial", Font.BOLD, 14);
     private final int BLOCK_SIZE = 24;
     private final int N_BLOCKS = 25;
@@ -66,14 +81,16 @@ public class Model extends JPanel implements ActionListener {
     private final Timer powerPelletTimer;
 
     private boolean canEatGhosts = false;
-
-
     private Image[] ghostImages;
 
-
-    public Model() {
-
-
+    public Model(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout) {
+        for (Integer i = 0; i < playerNames.size(); i++) {
+            PlayerScore player = new PlayerScore(playerNames.get(i), 0);
+            playerScores.add(player);
+        }
+        userName = playerName;
+        this.mainPanel = mainPanel;
+        this.cardLayout = cardLayout;
         loadImages();
         initGhostImages();
         initVariables();
@@ -101,26 +118,26 @@ public class Model extends JPanel implements ActionListener {
     }
 
     private void loadImages() {
-        down = new ImageIcon("../assets/down.gif").getImage();
-        up = new ImageIcon("../assets/up.gif").getImage();
-        left = new ImageIcon("../assets/left.gif").getImage();
-        right = new ImageIcon("../assets/right.gif").getImage();
+        down = new ImageIcon("client/src/main/assets/down.gif").getImage();
+        up = new ImageIcon("client/src/main/assets/up.gif").getImage();
+        left = new ImageIcon("client/src/main/assets/left.gif").getImage();
+        right = new ImageIcon("client/src/main/assets/right.gif").getImage();
 
-        superDown = new ImageIcon("assets/superpacman-down.gif").getImage();
-        superUp = new ImageIcon("assets/superpacman-up.gif").getImage();
-        superLeft = new ImageIcon("../assets/superpacman-left.gif").getImage();
-        superRight = new ImageIcon("../assets/superpacman-right.gif").getImage();
+        superDown = new ImageIcon("client/src/main/assets/superpacman-down.gif").getImage();
+        superUp = new ImageIcon("client/src/main/assets/superpacman-up.gif").getImage();
+        superLeft = new ImageIcon("client/src/main/assets/superpacman-left.gif").getImage();
+        superRight = new ImageIcon("client/src/main/assets/superpacman-right.gif").getImage();
 
         // Cargar las imágenes de los fantasmas
 
 
-        ghost1 = resizeImage(new ImageIcon("../assets/cyan-fire.png").getImage(), 22, 22);
-        ghost2 = resizeImage(new ImageIcon("../assets/red-fire.png").getImage(), 22, 22);
-        ghost3 = resizeImage(new ImageIcon("../assets/orange-fire.png").getImage(), 22, 22);
-        ghost4 = resizeImage(new ImageIcon("assets/pink-fire.png").getImage(), 22, 22);
+        ghost1 = resizeImage(new ImageIcon("client/src/main/assets/cyan-fire.png").getImage(), 22, 22);
+        ghost2 = resizeImage(new ImageIcon("client/src/main/assets/red-fire.png").getImage(), 22, 22);
+        ghost3 = resizeImage(new ImageIcon("client/src/main/assets/orange-fire.png").getImage(), 22, 22);
+        ghost4 = resizeImage(new ImageIcon("client/src/main/assets/pink-fire.png").getImage(), 22, 22);
 
 
-        heart = new ImageIcon("assets/heart.png").getImage();
+        heart = new ImageIcon("client/src/main/assets/heart.png").getImage();
     }
 
     private void initVariables() {
