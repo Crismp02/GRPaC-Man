@@ -1,4 +1,5 @@
 import io.grpc.ManagedChannel;
+import io.grpc.stub.StreamObserver;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,19 +10,24 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+
+import pacman.*;
+
+class PlayerScore {
+    public String name;
+    public int score;
+    public PlayerScore(String name, int score) {
+        this.name = name;
+        this.score = score;
+    }
+}
 
 public class Model extends JPanel implements ActionListener {
 
-
-    static class PlayerScore {
-        public String name;
-        public int score;
-        public PlayerScore(String name, int score) {
-            this.name = name;
-            this.score = score;
-        }
-    }
     private ArrayList<PlayerScore> playerScores = new ArrayList<>();
+    private final LobbyServiceGrpc.LobbyServiceStub asyncStub;
     private JPanel mainPanel; // Main panel to hold different screens
     private CardLayout cardLayout; // CardLayout to manage screens
     private String userName;
@@ -95,6 +101,8 @@ public class Model extends JPanel implements ActionListener {
         userName = playerName;
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
+        this.channel = channel;
+        asyncStub = LobbyServiceGrpc.newStub(channel);
         setPreferredSize(new Dimension(SCREEN_SIZE, SCREEN_SIZE));
         loadImages();
         initGhostImages();
@@ -102,7 +110,7 @@ public class Model extends JPanel implements ActionListener {
         addKeyListener(new TAdapter());
         setFocusable(true);
 
-        initGame();
+        startGame();
 
         powerPelletTimer = new Timer(6000, new ActionListener() {
             @Override
@@ -111,6 +119,62 @@ public class Model extends JPanel implements ActionListener {
                 powerPelletTimer.stop();
             }
         });
+    }
+
+    private void startGame() {
+        initGame(); // Initialize game variables and start the game
+        new Thread(this::streamScores).start(); // Start streaming scores in a new thread
+    }
+
+    private void streamScores() {
+        // Create a StreamObserver to receive score updates
+        StreamObserver<ScoreUpdate> responseObserver = new StreamObserver<ScoreUpdate>() {
+            @Override
+            public void onNext(ScoreUpdate scoreUpdate) {
+                System.out.println("Received score update: " + scoreUpdate.getPlayerName() + " - " + scoreUpdate.getScore());
+                for (PlayerScore playerScore : playerScores) {
+                    if (playerScore.name.equals(scoreUpdate.getPlayerName())) {
+                        playerScore.score = scoreUpdate.getScore();
+                        break;
+                    }
+                }
+                // Sort playerScores based on scores in descending order
+                playerScores.sort((a, b) -> Integer.compare(b.score, a.score));
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                System.out.println("Error streaming scores: " + throwable.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Streaming scores completed.");
+            }
+        };
+
+        // Create a StreamObserver to send score updates
+        StreamObserver<ScoreUpdate> requestObserver = asyncStub.streamScores(responseObserver);
+
+        // Continuously send score updates
+        Scanner scanner = new Scanner(System.in);
+        while (inGame) {
+            try {
+                // Wait for 1 second
+                TimeUnit.SECONDS.sleep(1);
+
+                // Create and send the score update
+                ScoreUpdate scoreUpdate = ScoreUpdate.newBuilder()
+                        .setPlayerName(userName)
+                        .setScore(score)
+                        .build();
+                requestObserver.onNext(scoreUpdate);
+            } catch (InterruptedException e) {
+                // Handle the interruption (e.g., log it and break the loop)
+                System.err.println("Thread was interrupted: " + e.getMessage());
+                break; // Optionally break the loop if interrupted
+            }
+        }
     }
 
     private Image resizeImage(Image originalImage, int width, int height) {
@@ -146,7 +210,7 @@ public class Model extends JPanel implements ActionListener {
     }
 
     private void initVariables() {
-
+        score = 0;
         screenData = new short[N_BLOCKS * N_BLOCKS];
         d = new Dimension(500, 500);
         ghost_x = new int[MAX_GHOSTS];
@@ -515,7 +579,7 @@ public class Model extends JPanel implements ActionListener {
         req_dx = 0;  // Asegúrate de que req_dx se inicialice a 0
         req_dy = 0;  // Asegúrate de que req_dy se inicialice a 0
 
-        countdownTimer = new Timer(1500, new ActionListener() {
+        countdownTimer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(timeRemaining > 0){
@@ -524,6 +588,9 @@ public class Model extends JPanel implements ActionListener {
 
                 if (timeRemaining <= 0) {
                     countdownTimer.stop();
+                    GameOverScreen gameOver = new GameOverScreen(userName, channel, playerScores, mainPanel, cardLayout, score);
+                    mainPanel.add(gameOver, "GameOver");
+                    cardLayout.show(mainPanel, "GameOver"); // Switch to the Lobby screen
                     inGame = false; // Finaliza el juego
                 }
             }
@@ -640,7 +707,7 @@ public class Model extends JPanel implements ActionListener {
         int subBoxHeight = (boxHeight - (padding * 6)) / 4; // Height of each sub-box, considering padding
         g2d.setFont(new Font("Arial", Font.PLAIN, 16)); // Font for sub-boxes
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < playerScores.size(); i++) {
             int subBoxY = boxY + padding + (i * (subBoxHeight + padding)); // Y position for each sub-box
 
             // Draw sub-box with black background and blue border
@@ -652,8 +719,8 @@ public class Model extends JPanel implements ActionListener {
 
             // Draw "Name" and "Score" labels
             g2d.setColor(Color.WHITE); // Text color
-            g2d.drawString("Name", boxX + 10 + padding, subBoxY + 20 + padding); // Positioning "Name"
-            g2d.drawString("Score", boxX + 100 + padding, subBoxY + 20 + padding); // Positioning "Score"
+            g2d.drawString(playerScores.get(i).name, boxX + 10 + padding, subBoxY + 20 + padding); // Positioning "Name"
+            g2d.drawString(String.valueOf(playerScores.get(i).score), boxX + 100 + padding, subBoxY + 20 + padding); // Positioning "Score"
         }
 
         if (canEatGhosts) {

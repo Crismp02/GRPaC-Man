@@ -14,6 +14,8 @@ service LobbyService {
   rpc StreamGameStart(stream GameStartUpdate) returns (stream GameStartNotification);
   rpc GetTopScores(TopScoresRequest) returns (TopScoresResponse);
   rpc InsertScore(InsertScoreRequest) returns (InsertScoreResponse);
+  rpc EndGame(EndGameRequest) returns (EndGameResponse);
+  rpc StreamEndGame(stream EndGameUpdate) returns (stream EndGameNotification);
 }
 
 message ScoreUpdate {
@@ -87,4 +89,20 @@ message InsertScoreRequest {
 message InsertScoreResponse {
   bool success = 1;
   string message = 2; // Optional message to provide feedback
+}
+
+message EndGameRequest {
+  string playerName = 1; // The name of the player who is ending the game
+}
+
+message EndGameResponse {
+  bool allPlayersEnded = 1; // Indicates if all players have ended the game
+}
+
+message EndGameUpdate {
+  string playerName = 1; // Indicates if a player has ended the game
+}
+
+message EndGameNotification {
+  bool allPlayersEnded = 1; // Notification message
 }

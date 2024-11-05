@@ -1,8 +1,6 @@
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
-import pacman.LeaveRequest;
-import pacman.LeaveResponse;
-import pacman.LobbyServiceGrpc;
+import pacman.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,10 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class GameOverScreen extends JPanel {
-    static class PlayerScore {
-        public String name;
-        public int score;
-    }
+
     private ImageIcon backgroundImage;
     private ImageIcon logoImage;
     private ImageIcon startButtonImage;
@@ -34,7 +29,28 @@ public class GameOverScreen extends JPanel {
         }
     }
 
-    public GameOverScreen(String userName, ManagedChannel channel, ArrayList<PlayerScore> playerScores, JPanel mainPanel, CardLayout cardLayout) {
+    public void insertScore(String playerName, int score) {
+        // Create the request
+        InsertScoreRequest request = InsertScoreRequest.newBuilder()
+                .setPlayerName(playerName)
+                .setScore(score)
+                .build();
+
+        // Call the InsertScore method
+        try {
+            InsertScoreResponse response = blockingStub.insertScore(request);
+            // Handle the response
+            if (response.getSuccess()) {
+                System.out.println("Score inserted successfully: " + response.getMessage());
+            } else {
+                System.out.println("Failed to insert score: " + response.getMessage());
+            }
+        } catch (StatusRuntimeException e) {
+            System.out.println("RPC failed: " + e.getStatus());
+        }
+    }
+
+    public GameOverScreen(String userName, ManagedChannel channel, ArrayList<PlayerScore> playerScores, JPanel mainPanel, CardLayout cardLayout, Integer score) {
         this.userName = userName;
         blockingStub = LobbyServiceGrpc.newBlockingStub(channel);
         this.mainPanel = mainPanel; // Store reference to main panel
@@ -108,12 +124,11 @@ public class GameOverScreen extends JPanel {
 
         // Set the cursor to a hand cursor when hovering over the button
         startButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
         // Center the button
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         startButton.addActionListener(e -> {
+            insertScore(userName, score);
             leaveLobby();
-            channel.shutdown();
             cardLayout.show(mainPanel, "Home");
         });
         add(startButton);

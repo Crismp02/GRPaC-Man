@@ -69,6 +69,30 @@ public  abstract class LobbyService
         pacman.TopScoresRequest request,
         com.google.protobuf.RpcCallback<pacman.TopScoresResponse> done);
 
+    /**
+     * <code>rpc InsertScore(.pacman.InsertScoreRequest) returns (.pacman.InsertScoreResponse);</code>
+     */
+    public abstract void insertScore(
+        com.google.protobuf.RpcController controller,
+        pacman.InsertScoreRequest request,
+        com.google.protobuf.RpcCallback<pacman.InsertScoreResponse> done);
+
+    /**
+     * <code>rpc EndGame(.pacman.EndGameRequest) returns (.pacman.EndGameResponse);</code>
+     */
+    public abstract void endGame(
+        com.google.protobuf.RpcController controller,
+        pacman.EndGameRequest request,
+        com.google.protobuf.RpcCallback<pacman.EndGameResponse> done);
+
+    /**
+     * <code>rpc StreamEndGame(stream .pacman.EndGameUpdate) returns (stream .pacman.EndGameNotification);</code>
+     */
+    public abstract void streamEndGame(
+        com.google.protobuf.RpcController controller,
+        pacman.EndGameUpdate request,
+        com.google.protobuf.RpcCallback<pacman.EndGameNotification> done);
+
   }
 
   public static com.google.protobuf.Service newReflectiveService(
@@ -130,6 +154,30 @@ public  abstract class LobbyService
         impl.getTopScores(controller, request, done);
       }
 
+      @java.lang.Override
+      public  void insertScore(
+          com.google.protobuf.RpcController controller,
+          pacman.InsertScoreRequest request,
+          com.google.protobuf.RpcCallback<pacman.InsertScoreResponse> done) {
+        impl.insertScore(controller, request, done);
+      }
+
+      @java.lang.Override
+      public  void endGame(
+          com.google.protobuf.RpcController controller,
+          pacman.EndGameRequest request,
+          com.google.protobuf.RpcCallback<pacman.EndGameResponse> done) {
+        impl.endGame(controller, request, done);
+      }
+
+      @java.lang.Override
+      public  void streamEndGame(
+          com.google.protobuf.RpcController controller,
+          pacman.EndGameUpdate request,
+          com.google.protobuf.RpcCallback<pacman.EndGameNotification> done) {
+        impl.streamEndGame(controller, request, done);
+      }
+
     };
   }
 
@@ -166,6 +214,12 @@ public  abstract class LobbyService
             return impl.streamGameStart(controller, (pacman.GameStartUpdate)request);
           case 6:
             return impl.getTopScores(controller, (pacman.TopScoresRequest)request);
+          case 7:
+            return impl.insertScore(controller, (pacman.InsertScoreRequest)request);
+          case 8:
+            return impl.endGame(controller, (pacman.EndGameRequest)request);
+          case 9:
+            return impl.streamEndGame(controller, (pacman.EndGameUpdate)request);
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -194,6 +248,12 @@ public  abstract class LobbyService
             return pacman.GameStartUpdate.getDefaultInstance();
           case 6:
             return pacman.TopScoresRequest.getDefaultInstance();
+          case 7:
+            return pacman.InsertScoreRequest.getDefaultInstance();
+          case 8:
+            return pacman.EndGameRequest.getDefaultInstance();
+          case 9:
+            return pacman.EndGameUpdate.getDefaultInstance();
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -222,6 +282,12 @@ public  abstract class LobbyService
             return pacman.GameStartNotification.getDefaultInstance();
           case 6:
             return pacman.TopScoresResponse.getDefaultInstance();
+          case 7:
+            return pacman.InsertScoreResponse.getDefaultInstance();
+          case 8:
+            return pacman.EndGameResponse.getDefaultInstance();
+          case 9:
+            return pacman.EndGameNotification.getDefaultInstance();
           default:
             throw new java.lang.AssertionError("Can't get here.");
         }
@@ -286,6 +352,30 @@ public  abstract class LobbyService
       pacman.TopScoresRequest request,
       com.google.protobuf.RpcCallback<pacman.TopScoresResponse> done);
 
+  /**
+   * <code>rpc InsertScore(.pacman.InsertScoreRequest) returns (.pacman.InsertScoreResponse);</code>
+   */
+  public abstract void insertScore(
+      com.google.protobuf.RpcController controller,
+      pacman.InsertScoreRequest request,
+      com.google.protobuf.RpcCallback<pacman.InsertScoreResponse> done);
+
+  /**
+   * <code>rpc EndGame(.pacman.EndGameRequest) returns (.pacman.EndGameResponse);</code>
+   */
+  public abstract void endGame(
+      com.google.protobuf.RpcController controller,
+      pacman.EndGameRequest request,
+      com.google.protobuf.RpcCallback<pacman.EndGameResponse> done);
+
+  /**
+   * <code>rpc StreamEndGame(stream .pacman.EndGameUpdate) returns (stream .pacman.EndGameNotification);</code>
+   */
+  public abstract void streamEndGame(
+      com.google.protobuf.RpcController controller,
+      pacman.EndGameUpdate request,
+      com.google.protobuf.RpcCallback<pacman.EndGameNotification> done);
+
   public static final
       com.google.protobuf.Descriptors.ServiceDescriptor
       getDescriptor() {
@@ -343,6 +433,21 @@ public  abstract class LobbyService
           com.google.protobuf.RpcUtil.<pacman.TopScoresResponse>specializeCallback(
             done));
         return;
+      case 7:
+        this.insertScore(controller, (pacman.InsertScoreRequest)request,
+          com.google.protobuf.RpcUtil.<pacman.InsertScoreResponse>specializeCallback(
+            done));
+        return;
+      case 8:
+        this.endGame(controller, (pacman.EndGameRequest)request,
+          com.google.protobuf.RpcUtil.<pacman.EndGameResponse>specializeCallback(
+            done));
+        return;
+      case 9:
+        this.streamEndGame(controller, (pacman.EndGameUpdate)request,
+          com.google.protobuf.RpcUtil.<pacman.EndGameNotification>specializeCallback(
+            done));
+        return;
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -371,6 +476,12 @@ public  abstract class LobbyService
         return pacman.GameStartUpdate.getDefaultInstance();
       case 6:
         return pacman.TopScoresRequest.getDefaultInstance();
+      case 7:
+        return pacman.InsertScoreRequest.getDefaultInstance();
+      case 8:
+        return pacman.EndGameRequest.getDefaultInstance();
+      case 9:
+        return pacman.EndGameUpdate.getDefaultInstance();
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -399,6 +510,12 @@ public  abstract class LobbyService
         return pacman.GameStartNotification.getDefaultInstance();
       case 6:
         return pacman.TopScoresResponse.getDefaultInstance();
+      case 7:
+        return pacman.InsertScoreResponse.getDefaultInstance();
+      case 8:
+        return pacman.EndGameResponse.getDefaultInstance();
+      case 9:
+        return pacman.EndGameNotification.getDefaultInstance();
       default:
         throw new java.lang.AssertionError("Can't get here.");
     }
@@ -524,6 +641,51 @@ public  abstract class LobbyService
           pacman.TopScoresResponse.class,
           pacman.TopScoresResponse.getDefaultInstance()));
     }
+
+    public  void insertScore(
+        com.google.protobuf.RpcController controller,
+        pacman.InsertScoreRequest request,
+        com.google.protobuf.RpcCallback<pacman.InsertScoreResponse> done) {
+      channel.callMethod(
+        getDescriptor().getMethods().get(7),
+        controller,
+        request,
+        pacman.InsertScoreResponse.getDefaultInstance(),
+        com.google.protobuf.RpcUtil.generalizeCallback(
+          done,
+          pacman.InsertScoreResponse.class,
+          pacman.InsertScoreResponse.getDefaultInstance()));
+    }
+
+    public  void endGame(
+        com.google.protobuf.RpcController controller,
+        pacman.EndGameRequest request,
+        com.google.protobuf.RpcCallback<pacman.EndGameResponse> done) {
+      channel.callMethod(
+        getDescriptor().getMethods().get(8),
+        controller,
+        request,
+        pacman.EndGameResponse.getDefaultInstance(),
+        com.google.protobuf.RpcUtil.generalizeCallback(
+          done,
+          pacman.EndGameResponse.class,
+          pacman.EndGameResponse.getDefaultInstance()));
+    }
+
+    public  void streamEndGame(
+        com.google.protobuf.RpcController controller,
+        pacman.EndGameUpdate request,
+        com.google.protobuf.RpcCallback<pacman.EndGameNotification> done) {
+      channel.callMethod(
+        getDescriptor().getMethods().get(9),
+        controller,
+        request,
+        pacman.EndGameNotification.getDefaultInstance(),
+        com.google.protobuf.RpcUtil.generalizeCallback(
+          done,
+          pacman.EndGameNotification.class,
+          pacman.EndGameNotification.getDefaultInstance()));
+    }
   }
 
   public static BlockingInterface newBlockingStub(
@@ -565,6 +727,21 @@ public  abstract class LobbyService
     public pacman.TopScoresResponse getTopScores(
         com.google.protobuf.RpcController controller,
         pacman.TopScoresRequest request)
+        throws com.google.protobuf.ServiceException;
+
+    public pacman.InsertScoreResponse insertScore(
+        com.google.protobuf.RpcController controller,
+        pacman.InsertScoreRequest request)
+        throws com.google.protobuf.ServiceException;
+
+    public pacman.EndGameResponse endGame(
+        com.google.protobuf.RpcController controller,
+        pacman.EndGameRequest request)
+        throws com.google.protobuf.ServiceException;
+
+    public pacman.EndGameNotification streamEndGame(
+        com.google.protobuf.RpcController controller,
+        pacman.EndGameUpdate request)
         throws com.google.protobuf.ServiceException;
   }
 
@@ -656,6 +833,42 @@ public  abstract class LobbyService
         controller,
         request,
         pacman.TopScoresResponse.getDefaultInstance());
+    }
+
+
+    public pacman.InsertScoreResponse insertScore(
+        com.google.protobuf.RpcController controller,
+        pacman.InsertScoreRequest request)
+        throws com.google.protobuf.ServiceException {
+      return (pacman.InsertScoreResponse) channel.callBlockingMethod(
+        getDescriptor().getMethods().get(7),
+        controller,
+        request,
+        pacman.InsertScoreResponse.getDefaultInstance());
+    }
+
+
+    public pacman.EndGameResponse endGame(
+        com.google.protobuf.RpcController controller,
+        pacman.EndGameRequest request)
+        throws com.google.protobuf.ServiceException {
+      return (pacman.EndGameResponse) channel.callBlockingMethod(
+        getDescriptor().getMethods().get(8),
+        controller,
+        request,
+        pacman.EndGameResponse.getDefaultInstance());
+    }
+
+
+    public pacman.EndGameNotification streamEndGame(
+        com.google.protobuf.RpcController controller,
+        pacman.EndGameUpdate request)
+        throws com.google.protobuf.ServiceException {
+      return (pacman.EndGameNotification) channel.callBlockingMethod(
+        getDescriptor().getMethods().get(9),
+        controller,
+        request,
+        pacman.EndGameNotification.getDefaultInstance());
     }
 
   }

@@ -95,6 +95,36 @@ public final class Pacman {
   static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pacman_TopScoresResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_InsertScoreRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_InsertScoreRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_InsertScoreResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_InsertScoreResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_EndGameRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_EndGameRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_EndGameResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_EndGameResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_EndGameUpdate_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_EndGameUpdate_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pacman_EndGameNotification_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pacman_EndGameNotification_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -119,20 +149,32 @@ public final class Pacman {
       "tion\022\017\n\007message\030\001 \001(\t\"1\n\014ScoreHistory\022\022\n" +
       "\nplayerName\030\001 \001(\t\022\r\n\005score\030\002 \001(\005\"\022\n\020TopS" +
       "coresRequest\"9\n\021TopScoresResponse\022$\n\006sco" +
-      "res\030\001 \003(\0132\024.pacman.ScoreHistory2\323\003\n\014Lobb" +
-      "yService\0226\n\tJoinLobby\022\023.pacman.JoinReque" +
-      "st\032\024.pacman.JoinResponse\0229\n\nLeaveLobby\022\024" +
-      ".pacman.LeaveRequest\032\025.pacman.LeaveRespo" +
-      "nse\022<\n\013StreamLobby\022\023.pacman.LobbyUpdate\032" +
-      "\024.pacman.PlayerStatus(\0010\001\022<\n\014StreamScore" +
-      "s\022\023.pacman.ScoreUpdate\032\023.pacman.ScoreUpd" +
-      "ate(\0010\001\022@\n\tStartGame\022\030.pacman.StartGameR" +
-      "equest\032\031.pacman.StartGameResponse\022M\n\017Str" +
-      "eamGameStart\022\027.pacman.GameStartUpdate\032\035." +
-      "pacman.GameStartNotification(\0010\001\022C\n\014GetT" +
-      "opScores\022\030.pacman.TopScoresRequest\032\031.pac" +
-      "man.TopScoresResponseB\024P\001Z\roperator/grpc" +
-      "\210\001\001b\006proto3"
+      "res\030\001 \003(\0132\024.pacman.ScoreHistory\"7\n\022Inser" +
+      "tScoreRequest\022\022\n\nplayerName\030\001 \001(\t\022\r\n\005sco" +
+      "re\030\002 \001(\005\"7\n\023InsertScoreResponse\022\017\n\007succe" +
+      "ss\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\"$\n\016EndGameRequ" +
+      "est\022\022\n\nplayerName\030\001 \001(\t\"*\n\017EndGameRespon" +
+      "se\022\027\n\017allPlayersEnded\030\001 \001(\010\"#\n\rEndGameUp" +
+      "date\022\022\n\nplayerName\030\001 \001(\t\".\n\023EndGameNotif" +
+      "ication\022\027\n\017allPlayersEnded\030\001 \001(\0102\240\005\n\014Lob" +
+      "byService\0226\n\tJoinLobby\022\023.pacman.JoinRequ" +
+      "est\032\024.pacman.JoinResponse\0229\n\nLeaveLobby\022" +
+      "\024.pacman.LeaveRequest\032\025.pacman.LeaveResp" +
+      "onse\022<\n\013StreamLobby\022\023.pacman.LobbyUpdate" +
+      "\032\024.pacman.PlayerStatus(\0010\001\022<\n\014StreamScor" +
+      "es\022\023.pacman.ScoreUpdate\032\023.pacman.ScoreUp" +
+      "date(\0010\001\022@\n\tStartGame\022\030.pacman.StartGame" +
+      "Request\032\031.pacman.StartGameResponse\022M\n\017St" +
+      "reamGameStart\022\027.pacman.GameStartUpdate\032\035" +
+      ".pacman.GameStartNotification(\0010\001\022C\n\014Get" +
+      "TopScores\022\030.pacman.TopScoresRequest\032\031.pa" +
+      "cman.TopScoresResponse\022F\n\013InsertScore\022\032." +
+      "pacman.InsertScoreRequest\032\033.pacman.Inser" +
+      "tScoreResponse\022:\n\007EndGame\022\026.pacman.EndGa" +
+      "meRequest\032\027.pacman.EndGameResponse\022G\n\rSt" +
+      "reamEndGame\022\025.pacman.EndGameUpdate\032\033.pac" +
+      "man.EndGameNotification(\0010\001B\024P\001Z\roperato" +
+      "r/grpc\210\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -222,6 +264,42 @@ public final class Pacman {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pacman_TopScoresResponse_descriptor,
         new java.lang.String[] { "Scores", });
+    internal_static_pacman_InsertScoreRequest_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_pacman_InsertScoreRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_InsertScoreRequest_descriptor,
+        new java.lang.String[] { "PlayerName", "Score", });
+    internal_static_pacman_InsertScoreResponse_descriptor =
+      getDescriptor().getMessageTypes().get(15);
+    internal_static_pacman_InsertScoreResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_InsertScoreResponse_descriptor,
+        new java.lang.String[] { "Success", "Message", });
+    internal_static_pacman_EndGameRequest_descriptor =
+      getDescriptor().getMessageTypes().get(16);
+    internal_static_pacman_EndGameRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_EndGameRequest_descriptor,
+        new java.lang.String[] { "PlayerName", });
+    internal_static_pacman_EndGameResponse_descriptor =
+      getDescriptor().getMessageTypes().get(17);
+    internal_static_pacman_EndGameResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_EndGameResponse_descriptor,
+        new java.lang.String[] { "AllPlayersEnded", });
+    internal_static_pacman_EndGameUpdate_descriptor =
+      getDescriptor().getMessageTypes().get(18);
+    internal_static_pacman_EndGameUpdate_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_EndGameUpdate_descriptor,
+        new java.lang.String[] { "PlayerName", });
+    internal_static_pacman_EndGameNotification_descriptor =
+      getDescriptor().getMessageTypes().get(19);
+    internal_static_pacman_EndGameNotification_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pacman_EndGameNotification_descriptor,
+        new java.lang.String[] { "AllPlayersEnded", });
     descriptor.resolveAllFeaturesImmutable();
   }
 

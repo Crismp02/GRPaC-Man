@@ -27,6 +27,8 @@ const (
 	LobbyService_StreamGameStart_FullMethodName = "/pacman.LobbyService/StreamGameStart"
 	LobbyService_GetTopScores_FullMethodName    = "/pacman.LobbyService/GetTopScores"
 	LobbyService_InsertScore_FullMethodName     = "/pacman.LobbyService/InsertScore"
+	LobbyService_EndGame_FullMethodName         = "/pacman.LobbyService/EndGame"
+	LobbyService_StreamEndGame_FullMethodName   = "/pacman.LobbyService/StreamEndGame"
 )
 
 // LobbyServiceClient is the client API for LobbyService service.
@@ -41,6 +43,8 @@ type LobbyServiceClient interface {
 	StreamGameStart(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[GameStartUpdate, GameStartNotification], error)
 	GetTopScores(ctx context.Context, in *TopScoresRequest, opts ...grpc.CallOption) (*TopScoresResponse, error)
 	InsertScore(ctx context.Context, in *InsertScoreRequest, opts ...grpc.CallOption) (*InsertScoreResponse, error)
+	EndGame(ctx context.Context, in *EndGameRequest, opts ...grpc.CallOption) (*EndGameResponse, error)
+	StreamEndGame(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[EndGameUpdate, EndGameNotification], error)
 }
 
 type lobbyServiceClient struct {
@@ -140,6 +144,29 @@ func (c *lobbyServiceClient) InsertScore(ctx context.Context, in *InsertScoreReq
 	return out, nil
 }
 
+func (c *lobbyServiceClient) EndGame(ctx context.Context, in *EndGameRequest, opts ...grpc.CallOption) (*EndGameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EndGameResponse)
+	err := c.cc.Invoke(ctx, LobbyService_EndGame_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lobbyServiceClient) StreamEndGame(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[EndGameUpdate, EndGameNotification], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &LobbyService_ServiceDesc.Streams[3], LobbyService_StreamEndGame_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[EndGameUpdate, EndGameNotification]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type LobbyService_StreamEndGameClient = grpc.BidiStreamingClient[EndGameUpdate, EndGameNotification]
+
 // LobbyServiceServer is the server API for LobbyService service.
 // All implementations must embed UnimplementedLobbyServiceServer
 // for forward compatibility.
@@ -152,6 +179,8 @@ type LobbyServiceServer interface {
 	StreamGameStart(grpc.BidiStreamingServer[GameStartUpdate, GameStartNotification]) error
 	GetTopScores(context.Context, *TopScoresRequest) (*TopScoresResponse, error)
 	InsertScore(context.Context, *InsertScoreRequest) (*InsertScoreResponse, error)
+	EndGame(context.Context, *EndGameRequest) (*EndGameResponse, error)
+	StreamEndGame(grpc.BidiStreamingServer[EndGameUpdate, EndGameNotification]) error
 	mustEmbedUnimplementedLobbyServiceServer()
 }
 
@@ -185,6 +214,12 @@ func (UnimplementedLobbyServiceServer) GetTopScores(context.Context, *TopScoresR
 }
 func (UnimplementedLobbyServiceServer) InsertScore(context.Context, *InsertScoreRequest) (*InsertScoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InsertScore not implemented")
+}
+func (UnimplementedLobbyServiceServer) EndGame(context.Context, *EndGameRequest) (*EndGameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EndGame not implemented")
+}
+func (UnimplementedLobbyServiceServer) StreamEndGame(grpc.BidiStreamingServer[EndGameUpdate, EndGameNotification]) error {
+	return status.Errorf(codes.Unimplemented, "method StreamEndGame not implemented")
 }
 func (UnimplementedLobbyServiceServer) mustEmbedUnimplementedLobbyServiceServer() {}
 func (UnimplementedLobbyServiceServer) testEmbeddedByValue()                      {}
@@ -318,6 +353,31 @@ func _LobbyService_InsertScore_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LobbyService_EndGame_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EndGameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LobbyServiceServer).EndGame(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LobbyService_EndGame_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LobbyServiceServer).EndGame(ctx, req.(*EndGameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LobbyService_StreamEndGame_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(LobbyServiceServer).StreamEndGame(&grpc.GenericServerStream[EndGameUpdate, EndGameNotification]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type LobbyService_StreamEndGameServer = grpc.BidiStreamingServer[EndGameUpdate, EndGameNotification]
+
 // LobbyService_ServiceDesc is the grpc.ServiceDesc for LobbyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -345,6 +405,10 @@ var LobbyService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "InsertScore",
 			Handler:    _LobbyService_InsertScore_Handler,
 		},
+		{
+			MethodName: "EndGame",
+			Handler:    _LobbyService_EndGame_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -362,6 +426,12 @@ var LobbyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "StreamGameStart",
 			Handler:       _LobbyService_StreamGameStart_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "StreamEndGame",
+			Handler:       _LobbyService_StreamEndGame_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
