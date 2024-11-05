@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Pacman extends JFrame{
 
 	public Pacman(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout) {
-		add(new Model(playerNames, playerName, channel, mainPanel, cardLayout));
+		add(new Model(playerNames, playerName, channel, mainPanel, cardLayout, this)); // Pasa 'this' al constructor de Model
 	}
 	
 	

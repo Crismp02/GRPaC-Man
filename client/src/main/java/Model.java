@@ -5,14 +5,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 
 public class Model extends JPanel implements ActionListener {
+
+    private JFrame frame;
     static class PlayerScore {
         public String name;
         public int score;
@@ -64,9 +64,9 @@ public class Model extends JPanel implements ActionListener {
     private final int[] validSpeeds = {1, 2, 3, 4, 6, 8};
     private final int maxSpeed = 6;
     private Dimension d;
-    private boolean inGame = false;
+    private boolean inGame = true;
     private boolean dying = false;
-    private int N_GHOSTS = 6;
+    private int N_GHOSTS = 12;
     private boolean[] isActive;
     private int lives, score;
     private int[] dx, dy;
@@ -86,14 +86,16 @@ public class Model extends JPanel implements ActionListener {
     private int timeRemaining; // Tiempo restante en segundos
     private Timer countdownTimer; // Timer para el temporizador
 
-    public Model(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout) {
+    public Model(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout, JFrame frame) {
         for (Integer i = 0; i < playerNames.size(); i++) {
             PlayerScore player = new PlayerScore(playerNames.get(i), 0);
             playerScores.add(player);
         }
+
         userName = playerName;
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
+        this.frame = frame;
         loadImages();
         initGhostImages();
         initVariables();
@@ -146,7 +148,7 @@ public class Model extends JPanel implements ActionListener {
     private void initVariables() {
 
         screenData = new short[N_BLOCKS * N_BLOCKS];
-        d = new Dimension(700, 700);
+        d = new Dimension(100000, 100000);
         ghost_x = new int[MAX_GHOSTS];
         ghost_dx = new int[MAX_GHOSTS];
         ghost_y = new int[MAX_GHOSTS];
@@ -176,15 +178,7 @@ public class Model extends JPanel implements ActionListener {
         }
     }
 
-    private void showIntroScreen(Graphics2D g2d) {
 
-        String start = "¡Pulsa ESPACIO para comenzar!";
-        g2d.setColor(new Color(255, 213, 43));
-        if(timeRemaining > 0){
-            g2d.drawString(start, SCREEN_SIZE / 2 - 110, SCREEN_SIZE / 2);
-        }
-
-    }
 
     private void drawScore(Graphics2D g) {
         g.setFont(smallFont);
@@ -516,12 +510,12 @@ public class Model extends JPanel implements ActionListener {
         score = 0;
         timeRemaining = 60;
         initLevel();
-        N_GHOSTS = 6;
+        N_GHOSTS = 12;
         currentSpeed = 3;
         req_dx = 0;  // Asegúrate de que req_dx se inicialice a 0
         req_dy = 0;  // Asegúrate de que req_dy se inicialice a 0
 
-        countdownTimer = new Timer(1000, new ActionListener() {
+        countdownTimer = new Timer(1500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(timeRemaining > 0){
@@ -610,6 +604,13 @@ public class Model extends JPanel implements ActionListener {
             g2d.drawString("EAT!", SCREEN_SIZE / 2 - 30, SCREEN_SIZE / 2); // Ajusta la posición según sea necesario
         }
 
+        if (!inGame) {
+            // Dibuja el texto "EAT!" en la parte inferior, al lado de los corazones
+            g2d.setColor(Color.CYAN);
+            g2d.setFont(new Font("Arial", Font.BOLD, 24));
+            g2d.drawString("¡Perdiste! :(", SCREEN_SIZE / 2 - 67, SCREEN_SIZE / 2); // Ajusta la posición según sea necesario
+        }
+
         if (!inGame && timeRemaining <= 0) {
             // Si el tiempo se ha acabado, dibuja el mensaje
             g2d.setColor(Color.cyan); // Color del mensaje
@@ -619,12 +620,12 @@ public class Model extends JPanel implements ActionListener {
             int x = (SCREEN_SIZE - fm.stringWidth(message)) / 2; // Centrar horizontalmente
             int y = SCREEN_SIZE / 2; // Centrar verticalmente
             g2d.drawString(message, x, y);
+
+            frame.dispose();
         }
 
         if (inGame) {
             playGame(g2d);
-        } else {
-            showIntroScreen(g2d);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -659,11 +660,6 @@ public class Model extends JPanel implements ActionListener {
                     req_dy = 1;
                 } else if (key == KeyEvent.VK_ESCAPE && timer.isRunning()) {
                     inGame = false;
-                }
-            } else {
-                if (key == KeyEvent.VK_SPACE) {
-                    inGame = true;
-                    initGame();
                 }
             }
         }
