@@ -83,6 +83,9 @@ public class Model extends JPanel implements ActionListener {
     private boolean canEatGhosts = false;
     private Image[] ghostImages;
 
+    private int timeRemaining; // Tiempo restante en segundos
+    private Timer countdownTimer; // Timer para el temporizador
+
     public Model(ArrayList<String> playerNames, String playerName, ManagedChannel channel, JPanel mainPanel, CardLayout cardLayout) {
         for (Integer i = 0; i < playerNames.size(); i++) {
             PlayerScore player = new PlayerScore(playerNames.get(i), 0);
@@ -175,9 +178,12 @@ public class Model extends JPanel implements ActionListener {
 
     private void showIntroScreen(Graphics2D g2d) {
 
-        String start = "Press SPACE to start";
-        g2d.setColor(Color.yellow);
-        g2d.drawString(start, (SCREEN_SIZE) / 4, 150);
+        String start = "¡Pulsa ESPACIO para comenzar!";
+        g2d.setColor(new Color(255, 213, 43));
+        if(timeRemaining > 0){
+            g2d.drawString(start, SCREEN_SIZE / 2 - 110, SCREEN_SIZE / 2);
+        }
+
     }
 
     private void drawScore(Graphics2D g) {
@@ -508,12 +514,27 @@ public class Model extends JPanel implements ActionListener {
 
         lives = 3;
         score = 0;
+        timeRemaining = 60;
         initLevel();
         N_GHOSTS = 6;
         currentSpeed = 3;
         req_dx = 0;  // Asegúrate de que req_dx se inicialice a 0
         req_dy = 0;  // Asegúrate de que req_dy se inicialice a 0
 
+        countdownTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(timeRemaining > 0){
+                    timeRemaining--;
+                }
+
+                if (timeRemaining <= 0) {
+                    countdownTimer.stop();
+                    inGame = false; // Finaliza el juego
+                }
+            }
+        });
+        countdownTimer.start();
     }
 
     private void initLevel() {
@@ -563,6 +584,12 @@ public class Model extends JPanel implements ActionListener {
         dying = false;
     }
 
+    private void drawTimer(Graphics2D g) {
+        g.setFont(smallFont);
+        g.setColor(new Color(255, 0, 0)); // Color rojo para el temporizador
+        String timeText = "Tiempo: " + timeRemaining + "s";
+        g.drawString(timeText, SCREEN_SIZE / 2 - 50, SCREEN_SIZE + 16); // Ajusta la posición según sea necesario
+    }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -574,12 +601,24 @@ public class Model extends JPanel implements ActionListener {
 
         drawMaze(g2d);
         drawScore(g2d);
+        drawTimer(g2d);
 
         if (canEatGhosts) {
             // Dibuja el texto "EAT!" en la parte inferior, al lado de los corazones
             g2d.setColor(Color.YELLOW);
             g2d.setFont(new Font("Arial", Font.BOLD, 24));
             g2d.drawString("EAT!", SCREEN_SIZE / 2 - 30, SCREEN_SIZE / 2); // Ajusta la posición según sea necesario
+        }
+
+        if (!inGame && timeRemaining <= 0) {
+            // Si el tiempo se ha acabado, dibuja el mensaje
+            g2d.setColor(Color.cyan); // Color del mensaje
+            g2d.setFont(new Font("Arial", Font.BOLD, 24)); // Fuente del mensaje
+            String message = "Se acabó el tiempo :(";
+            FontMetrics fm = g2d.getFontMetrics();
+            int x = (SCREEN_SIZE - fm.stringWidth(message)) / 2; // Centrar horizontalmente
+            int y = SCREEN_SIZE / 2; // Centrar verticalmente
+            g2d.drawString(message, x, y);
         }
 
         if (inGame) {
